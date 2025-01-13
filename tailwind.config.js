@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: 'class',
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -36,6 +37,38 @@ export default {
           700: "#374151", // Very dark gray
           800: "#1F2937", // Charcoal
           900: "#111827", // Almost black
+        },
+        dark: {
+          background: '#0A1128', // Deep dark background
+          surface: '#111827', // Slightly lighter surface
+          primary: {
+            50: '#002A4D',
+            100: '#004477',
+            200: '#005E9C',
+            300: '#0078C2',
+            400: '#0091E6',
+            500: '#1AA5FF', // Inverted primary colors
+            600: '#4DB8FF',
+            700: '#80CCFF',
+            800: '#B3DFFF',
+            900: '#E6F2FF',
+          },
+          neutral: {
+            50: '#111827',
+            100: '#1F2937',
+            200: '#374151',
+            300: '#4B5563',
+            400: '#6B7280',
+            500: '#9CA3AF',
+            600: '#D1D5DB',
+            700: '#E5E7EB',
+            800: '#F3F4F6',
+            900: '#F9FAFB',
+          },
+          text: {
+            primary: '#F9FAFB',
+            secondary: '#D1D5DB',
+          }
         },
 
         // Accent Colors
