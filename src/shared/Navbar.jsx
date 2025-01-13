@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import {
   Navbar,
   Typography,
@@ -7,11 +7,14 @@ import {
   IconButton,
   Collapse,
 } from "@material-tailwind/react";
-import { User, LogOut } from "lucide-react"; 
+import { User, LogOut } from "lucide-react";
 import DarkModeToggle from "../components/DarkModeToggle";
+import useAuth from "../hooks/useAuth";
 
 const NavbarDefault = () => {
   const [openNav, setOpenNav] = useState(false);
+  const { user, logOut } = useAuth();
+  const navigate = useNavigate();
 
   React.useEffect(() => {
     window.addEventListener(
@@ -36,11 +39,11 @@ const NavbarDefault = () => {
             text-neutral-800 dark:text-dark-text-primary 
             hover:text-primary-500 dark:hover:text-primary-400"
         >
-          <NavLink 
-            to={item.path} 
-            className={({ isActive }) => 
-              isActive 
-                ? "text-primary-500 dark:text-primary-400 border-b-2 border-primary-500 dark:border-primary-400" 
+          <NavLink
+            to={item.path}
+            className={({ isActive }) =>
+              isActive
+                ? "text-primary-500 dark:text-primary-400 border-b-2 border-primary-500 dark:border-primary-400"
                 : ""
             }
           >
@@ -52,7 +55,7 @@ const NavbarDefault = () => {
   );
 
   return (
-    <Navbar 
+    <Navbar
       className=" border-none sticky top-0 z-50 h-max max-w-full rounded-none py-2 lg:py-4 
         bg-neutral-50 dark:bg-dark-background 
         text-neutral-900 dark:text-dark-text-primary 
@@ -74,54 +77,63 @@ const NavbarDefault = () => {
         {/* Desktop Navigation */}
         <div className="flex items-center gap-4">
           <div className="mr-4 hidden lg:block">{navList}</div>
-          
+
           {/* Authentication Buttons */}
           <div className="flex items-center gap-x-2">
-            <DarkModeToggle/>
+            <DarkModeToggle />
             {/* Conditional Rendering for Auth Buttons */}
-            <Button
-              variant="outlined"
-              size="sm"
-              className="hidden lg:inline-block 
+            {user && user?.email ?
+
+              <div className="hidden lg:flex items-center gap-2">
+                <IconButton
+                  variant="text"
+                  className="rounded-full 
+                  bg-primary-100 text-primary-600 
+                  dark:bg-primary-900/20 dark:text-primary-400
+                  hover:bg-primary-200 dark:hover:bg-primary-800/30"
+                >
+                  <User className="h-5 w-5" />
+                </IconButton>
+                <IconButton
+                  onClick={logOut}
+                  variant="text"
+                  className="rounded-full 
+                  bg-danger-100 text-danger-600 
+                  dark:bg-danger-900/20 dark:text-danger-400
+                  hover:bg-danger-200 dark:hover:bg-danger-800/30"
+                >
+                  <LogOut className="h-5 w-5" />
+                </IconButton>
+              </div>
+              :
+              <div className="flex items-center gap-2">
+                <Button
+                  onClick={() => navigate('/login')}
+                  variant="outlined"
+                  size="sm"
+                  className="hidden lg:inline-block 
                 border-primary-500 text-primary-500 
                 dark:border-primary-400 dark:text-primary-400
                 hover:bg-primary-50 dark:hover:bg-primary-900/20"
-            >
-              Log In
-            </Button>
-            <Button
-              variant="gradient"
-              size="sm"
-              className="hidden lg:inline-block 
+                >
+                  Log In
+                </Button>
+                <Button
+                  onClick={() => navigate('/register')}
+                  variant="gradient"
+                  size="sm"
+                  className="hidden lg:inline-block 
                 bg-gradient-to-r from-primary-500 to-primary-600 
                 dark:from-primary-400 dark:to-primary-500 
                 hover:from-primary-600 hover:to-primary-700 
                 dark:hover:from-primary-500 dark:hover:to-primary-600"
-            >
-              Sign Up
-            </Button>
+                >
+                  Sign Up
+                </Button>
+              </div>
+            }
 
-            {/* User Profile / Logout */}
-            <div className="hidden lg:flex items-center gap-2">
-              <IconButton 
-                variant="text" 
-                className="rounded-full 
-                  bg-primary-100 text-primary-600 
-                  dark:bg-primary-900/20 dark:text-primary-400
-                  hover:bg-primary-200 dark:hover:bg-primary-800/30"
-              >
-                <User className="h-5 w-5" />
-              </IconButton>
-              <IconButton 
-                variant="text" 
-                className="rounded-full 
-                  bg-danger-100 text-danger-600 
-                  dark:bg-danger-900/20 dark:text-danger-400
-                  hover:bg-danger-200 dark:hover:bg-danger-800/30"
-              >
-                <LogOut className="h-5 w-5" />
-              </IconButton>
-            </div>
+
           </div>
 
           {/* Mobile Menu Toggle */}
@@ -168,26 +180,26 @@ const NavbarDefault = () => {
       </div>
 
       {/* Mobile Navigation Collapse */}
-      <Collapse 
-        open={openNav} 
+      <Collapse
+        open={openNav}
         className="bg-neutral-50 dark:bg-dark-background transition-colors duration-300"
       >
         {navList}
         <div className="flex flex-col items-center gap-x-1">
-          <Button 
-            fullWidth 
-            variant="outlined" 
-            size="sm" 
+          <Button
+            fullWidth
+            variant="outlined"
+            size="sm"
             className="mb-2 
               border-primary-500 text-primary-500
               dark:border-primary-400 dark:text-primary-400"
           >
             Log In
           </Button>
-          <Button 
-            fullWidth 
-            variant="gradient" 
-            size="sm" 
+          <Button
+            fullWidth
+            variant="gradient"
+            size="sm"
             className="bg-gradient-to-r 
               from-primary-500 to-primary-600
               dark:from-primary-400 dark:to-primary-500"
@@ -196,7 +208,7 @@ const NavbarDefault = () => {
           </Button>
         </div>
       </Collapse>
-    </Navbar>
+    </Navbar >
   );
 };
 
