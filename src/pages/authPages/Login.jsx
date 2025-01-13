@@ -30,6 +30,15 @@ const Login = () => {
   }
 
   const handleSignInWithGoogle = () => {
+    signInWithGoogle()
+      .then(result => {
+        const user = result.user;
+        setUser(user);
+        navigate('/');
+      })
+      .catch(err => {
+        console.error(err);
+      })
 
   }
 

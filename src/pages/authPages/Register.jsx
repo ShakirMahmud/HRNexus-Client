@@ -8,7 +8,7 @@ import { FcGoogle } from "react-icons/fc";
 import { Link, useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 const Register = () => {
-    const { createUser, setUser, updateUserProfile } = useAuth();
+    const { createUser, setUser, updateUserProfile, signInWithGoogle } = useAuth();
     const navigate = useNavigate();
     const handleSignUp = (e) => {
         e.preventDefault();
@@ -31,6 +31,15 @@ const Register = () => {
     }
 
     const handleSignInWithGoogle = () => {
+        signInWithGoogle()
+            .then(result => {
+                const user = result.user;
+                setUser(user);
+                navigate('/');
+            })
+            .catch(err => {
+                console.error(err);
+            })
 
     }
     return (
@@ -81,7 +90,7 @@ const Register = () => {
                         }}
                     />
                 </div>
-                
+
                 <Button type="submit" className="mt-6" fullWidth>
                     sign up
                 </Button>
