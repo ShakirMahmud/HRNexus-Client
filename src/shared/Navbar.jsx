@@ -212,7 +212,4 @@ const NavbarDefault = () => {
   );
 };
 
-// Logo Component
-
-
 export default NavbarDefault;

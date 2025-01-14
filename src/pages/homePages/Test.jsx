@@ -1,4 +1,5 @@
 
+import { use } from "react";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import useAdmin from "../../hooks/useAdmin";
 import useAuth from "../../hooks/useAuth";
@@ -18,13 +19,13 @@ const Test = () => {
     return (
         <div>
             {
-                isAdmin && <h1 className="text-7xl text-red-500">You are admin. {user?.email}</h1>
+               user ? isAdmin ? <h1 className="text-7xl text-red-500">You are admin. {user?.email}</h1> : <h1>user</h1> : <h1>no user</h1>
             }
             {
-                isHR && <h1 className="text-7xl text-red-500">You are HR. {user?.email}</h1>
+                user ? isHR ? <h1 className="text-7xl text-red-500">You are HR. {user?.email}</h1> : <h1>user</h1> : <h1>no user</h1>
             }
             {
-                isEmployee && <h1 className="text-7xl text-red-500">You are Employee. {user?.email}</h1>
+                user ? isEmployee ? <h1 className="text-7xl text-red-500">You are Employee. {user?.email}</h1> : <h1>user</h1> : <h1>no user</h1>
             }
         </div>
     );

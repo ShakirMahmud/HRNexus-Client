@@ -5,6 +5,8 @@ import Home from "../pages/homePages/Home";
 import ErrorPage from "../pages/ErrorPage";
 import Login from "../pages/authPages/Login";
 import Register from "../pages/authPages/Register";
+import PrivateRoute from "./PrivateRoute";
+import DashboardLayout from "../layouts/DashboardLayout";
 
 
 export const router = createBrowserRouter([
@@ -17,7 +19,10 @@ export const router = createBrowserRouter([
                 path: "/",
                 element: <Home/>
             },
-            {},
+            {
+                path: 'contact',
+                element: <h1>Contact</h1>
+            },
             {},
             {},
             {
@@ -28,6 +33,30 @@ export const router = createBrowserRouter([
                 path: 'register',
                 element: <Register/>
             },
+        ]
+    },
+    {
+        path: 'dashboard',
+        element: <PrivateRoute><DashboardLayout/></PrivateRoute>,
+        children:[
+            // employee routes 
+            {},
+            {},
+            {},
+            {},
+            {},
+            // hr routes
+            {},
+            {},
+            {},
+            {},
+            {},
+            // admin routes
+            {},
+            {},
+            {},
+            {},
+            {},
         ]
     }
 ])
