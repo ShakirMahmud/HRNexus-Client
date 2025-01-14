@@ -96,6 +96,7 @@ export default {
       animation: {
         "fade-in": "fadeIn 0.5s ease-in-out",
         "slide-up": "slideUp 0.5s ease-out",
+        "spin": 'spin 1s linear infinite',
       },
       keyframes: {
         fadeIn: {
