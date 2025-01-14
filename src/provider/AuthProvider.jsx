@@ -59,11 +59,21 @@ const AuthProvider = ({ children }) => {
             setUser(currentUser);
             setLoading(false);
             console.log('current user', currentUser);
-            if (currentUser) {
-                // const response = await axiosPublic.get(`/users/check?email=${currentUser?.email}`);
-                // if (!response.data.roleValue) {
-                //     logOut();
-                // }
+            if(currentUser){
+                // create token
+                const userInfo = { email: currentUser.email}
+                axiosPublic.post('/jwt', userInfo)
+                    .then(data => {
+                        if(data.data.token){
+                            // set token
+                            localStorage.setItem('token', data.data.token);
+                            setLoading(false);
+                        }
+                    })
+            }else{
+                // remove token
+                localStorage.removeItem('token');
+                setLoading(false);
             }
         });
         return () => {
