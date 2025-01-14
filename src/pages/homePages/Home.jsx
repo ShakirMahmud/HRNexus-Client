@@ -1,8 +1,9 @@
+import Test from "./Test";
 
 const Home = () => {
     return (
         <div>
-            
+            <Test/>
         </div>
     );
 };
