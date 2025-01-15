@@ -22,7 +22,7 @@ import {
     HomeIcon,
 } from "@heroicons/react/24/solid";
 import { ChevronRightIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import useAdmin from "../hooks/useAdmin";
 import useHR from "../hooks/useHR";
@@ -83,7 +83,7 @@ const DashboardLayout = () => {
 
             <List>
                 {/* Home Link */}
-                <NavLink to="/dashboard" className={NavLinkStyle}>
+                <NavLink end to="/dashboard" className={NavLinkStyle}>
                     <ListItemPrefix>
                         <HomeIcon className="h-5 w-5" />
                     </ListItemPrefix>
@@ -185,17 +185,20 @@ const DashboardLayout = () => {
                 {/* Employee Links */}
                 {isEmployee && (
                     <>
-                        <NavLink to="/dashboard/my-tasks" className={NavLinkStyle}>
+                        <NavLink
+                            to="/dashboard/work-sheet"
+                            
+                            className={({ isActive }) =>
+                                `flex items-center gap-3 py-3 px-4 rounded-lg ${isActive
+                                    ? "bg-blue-500 text-white"
+                                    : "text-gray-700 hover:bg-blue-50"
+                                }`
+                            }
+                        >
                             <ListItemPrefix>
                                 <InboxIcon className="h-5 w-5" />
                             </ListItemPrefix>
-                            My Tasks
-                        </NavLink>
-                        <NavLink to="/dashboard/my-salary" className={NavLinkStyle}>
-                            <ListItemPrefix>
-                                <ShoppingBagIcon className="h-5 w-5" />
-                            </ListItemPrefix>
-                            My Salary
+                            My Work-Sheet
                         </NavLink>
                     </>
                 )}
@@ -218,15 +221,15 @@ const DashboardLayout = () => {
         </Card>
     );
 
-    if(isAdminLoading || isHRLoading || isEmployeeLoading) {
-        return <LoadingSpinner/>
+    if (isAdminLoading || isHRLoading || isEmployeeLoading) {
+        return <LoadingSpinner />
     }
 
     return (
         <div>
-            <NavbarDefault />
+            {/* <NavbarDefault /> */}
             <div className="flex">
-                <div className="hidden md:block w-[20%] border-2">
+                <div className="hidden md:block w-[20%] border-2 pt-10">
                     <DashboardContent />
                 </div>
                 <div className="md:hidden">
@@ -241,8 +244,9 @@ const DashboardLayout = () => {
                         <DashboardContent />
                     </Drawer>
                 </div>
-                <div className="flex-1 p-4">
+                <div className="flex-1 p-4 pt-10">
                     {/* Main content goes here */}
+                    <Outlet />
                 </div>
             </div>
         </div>

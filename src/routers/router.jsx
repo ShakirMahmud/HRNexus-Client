@@ -7,6 +7,8 @@ import Login from "../pages/authPages/Login";
 import Register from "../pages/authPages/Register";
 import PrivateRoute from "./PrivateRoute";
 import DashboardLayout from "../layouts/DashboardLayout";
+import EmployeeRoute from "./EmployeeRoute";
+import WorkSheet from "../pages/dashboardPages/employeePages/WorkSheet";
 
 
 export const router = createBrowserRouter([
@@ -40,7 +42,10 @@ export const router = createBrowserRouter([
         element: <PrivateRoute><DashboardLayout/></PrivateRoute>,
         children:[
             // employee routes 
-            {},
+            {
+                path: 'work-sheet',
+                element: <EmployeeRoute><WorkSheet/></EmployeeRoute>
+            },
             {},
             {},
             {},
