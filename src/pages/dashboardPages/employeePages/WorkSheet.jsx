@@ -13,6 +13,7 @@ import WorkSheetTable from '../../../components/WorkSheetTable';
 import Swal from 'sweetalert2';
 import useAxiosSecure from '../../../hooks/useAxiosSecure';
 import useAuth from '../../../hooks/useAuth';
+import useWorkSheet from '../../../hooks/useWorkSheet';
 
 const WorkSheet = () => {
     const [selectedTask, setSelectedTask] = useState('');
@@ -21,7 +22,8 @@ const WorkSheet = () => {
     const [workSheetEntries, setWorkSheetEntries] = useState([]);
     const [editingEntry, setEditingEntry] = useState(null);
     const axiosSecure = useAxiosSecure();
-    const {user} = useAuth();
+    const { user } = useAuth();
+    const { refetch } = useWorkSheet();
 
     const taskOptions = [
         'Sales',
@@ -66,6 +68,7 @@ const WorkSheet = () => {
                         title: 'Success',
                         text: 'Entry added successfully'
                     });
+                    refetch();
                 }
             })
             .catch(err => {
@@ -80,14 +83,6 @@ const WorkSheet = () => {
                     text: 'Error adding entry'
                 });
             });
-    };
-
-    const handleEditEntry = () => {
-        // Function to be implemented
-    };
-
-    const handleDeleteEntry = () => {
-        // Function to be implemented
     };
 
     return (
@@ -163,11 +158,7 @@ const WorkSheet = () => {
 
                 {/* Table Section */}
                 <div className="overflow-x-auto max-h-[70vh]">
-                    <WorkSheetTable
-                        workSheetEntries={workSheetEntries}
-                        handleEditEntry={handleEditEntry}
-                        handleDeleteEntry={handleDeleteEntry}
-                    />
+                    <WorkSheetTable />
                 </div>
             </Card>
         </div>

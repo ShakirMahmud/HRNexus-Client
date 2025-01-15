@@ -27,7 +27,7 @@ const LoadingSpinner = ({
     return (
         <div 
             className={`
-                flex justify-center items-center 
+                flex justify-center items-center min-h-screen
                 ${fullWidth ? 'w-full' : 'inline-block'}
                 ${className}
             `}

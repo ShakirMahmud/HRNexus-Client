@@ -1,4 +1,3 @@
-
 import { useQuery } from '@tanstack/react-query';
 import useAxiosSecure from './useAxiosSecure';
 import useAuth from './useAuth';
@@ -10,25 +9,16 @@ const useWorkSheet = () => {
     const { isHr } = useHR();
     const { isEmployee } = useEmployee();
 
-    let link = ``;
-
-    if (isEmployee) {
-        link = `/workSheet/${user?.email}`;
-    }
-
-    if (isHr) {
-        link = `/workSheet`;
-    }
-
-    const { data: workSheet, isLoading: workSheetLoading, refetch } = useQuery({
-        queryKey: ['workSheet'],
+    const { data: workSheet = [], isLoading: workSheetLoading, refetch } = useQuery({
+        queryKey: ['workSheet', user?.email, isEmployee],
         queryFn: async () => {
-            const res = await axiosSecure.get(link);
-            return res.data;
+            const res = await axiosSecure.get(
+                isEmployee ? `/workSheet/${user?.email}` : `/workSheet`
+            );
+            return Array.isArray(res.data) ? res.data : [res.data];
         },
         enabled: !!user
     });
-
     return { workSheet, workSheetLoading, refetch };
 
 };
