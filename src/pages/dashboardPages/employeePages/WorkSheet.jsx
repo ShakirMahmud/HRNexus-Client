@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
-import { 
-    Card, 
-    Typography, 
-    Select, 
-    Option, 
-    Input, 
-    Button 
+import {
+    Card,
+    Typography,
+    Select,
+    Option,
+    Input,
+    Button
 } from "@material-tailwind/react";
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import WorkSheetTable from '../../../components/WorkSheetTable';
 import Swal from 'sweetalert2';
+import useAxiosSecure from '../../../hooks/useAxiosSecure';
+import useAuth from '../../../hooks/useAuth';
 
 const WorkSheet = () => {
     const [selectedTask, setSelectedTask] = useState('');
@@ -18,17 +20,19 @@ const WorkSheet = () => {
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [workSheetEntries, setWorkSheetEntries] = useState([]);
     const [editingEntry, setEditingEntry] = useState(null);
+    const axiosSecure = useAxiosSecure();
+    const {user} = useAuth();
 
     const taskOptions = [
-        'Sales', 
-        'Support', 
-        'Content', 
+        'Sales',
+        'Support',
+        'Content',
         'Paper-work',
         'Research',
         'Development'
     ];
 
-    const handleAddEntry = () => {
+    const handleAddEntry = async () => {
         if (!selectedTask || !hoursWorked || !selectedDate) {
             // Optional: Show a toast or alert
             Swal.fire({
@@ -40,16 +44,42 @@ const WorkSheet = () => {
                 title: 'Incomplete Form',
                 text: 'Please fill in all fields before adding an entry'
             });
-            return; // Stop the function if any field is empty
+            return;
         }
         // get form data
         const entry = {
             task: selectedTask,
             hours: hoursWorked,
-            date: selectedDate
+            date: selectedDate,
+            email: user?.email
         };
-        console.log(entry)
-        setWorkSheetEntries([...workSheetEntries, entry]);
+
+        const res = await axiosSecure.post('/workSheet', entry)
+            .then(res => {
+                if (res.data.insertedId) {
+                    Swal.fire({
+                        icon: 'success',
+                        toast: true,
+                        position: 'top',
+                        showConfirmButton: false,
+                        timer: 1500,
+                        title: 'Success',
+                        text: 'Entry added successfully'
+                    });
+                }
+            })
+            .catch(err => {
+                console.log(err);
+                Swal.fire({
+                    icon: 'error',
+                    toast: true,
+                    position: 'top',
+                    showConfirmButton: false,
+                    timer: 1500,
+                    title: 'Error',
+                    text: 'Error adding entry'
+                });
+            });
     };
 
     const handleEditEntry = () => {
@@ -66,15 +96,15 @@ const WorkSheet = () => {
                 {/* Form Section */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
                     <div>
-                        <Typography 
-                            variant="small" 
+                        <Typography
+                            variant="small"
                             className="mb-2 text-neutral-700 dark:text-neutral-300"
                         >
                             Select Task
                         </Typography>
                         <Select
                             value={selectedTask}
-                            required 
+                            required
                             onChange={(value) => setSelectedTask(value)}
                             label="Choose Task"
                             color="blue"
@@ -89,8 +119,8 @@ const WorkSheet = () => {
                     </div>
 
                     <div>
-                        <Typography 
-                            variant="small" 
+                        <Typography
+                            variant="small"
                             className="mb-2 text-neutral-700 dark:text-neutral-300"
                         >
                             Hours Worked
@@ -107,8 +137,8 @@ const WorkSheet = () => {
                     </div>
 
                     <div>
-                        <Typography 
-                            variant="small" 
+                        <Typography
+                            variant="small"
                             className="mb-2 text-neutral-700 dark:text-neutral-300"
                         >
                             Date
@@ -121,7 +151,7 @@ const WorkSheet = () => {
                     </div>
 
                     <div className="flex items-end">
-                        <Button 
+                        <Button
                             onClick={handleAddEntry}
                             color="blue"
                             className="bg-primary-500 hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-500"
@@ -133,7 +163,7 @@ const WorkSheet = () => {
 
                 {/* Table Section */}
                 <div className="overflow-x-auto max-h-[70vh]">
-                    <WorkSheetTable 
+                    <WorkSheetTable
                         workSheetEntries={workSheetEntries}
                         handleEditEntry={handleEditEntry}
                         handleDeleteEntry={handleDeleteEntry}
