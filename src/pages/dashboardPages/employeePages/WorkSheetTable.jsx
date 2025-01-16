@@ -1,15 +1,18 @@
 import { Button, Typography } from '@material-tailwind/react';
 import { Pencil, Trash2 } from 'lucide-react';
 import React, { useState } from 'react';
-import useAuth from '../hooks/useAuth';
-import useWorkSheet from '../hooks/useWorkSheet';
-import LoadingSpinner from './LoadingSpinner';
-import EditWorkSheetTable from '../pages/dashboardPages/employeePages/EditWorkSheetTable';
+import useAuth from '../../../hooks/useAuth';
+import useWorkSheet from '../../../hooks/useWorkSheet';
+import LoadingSpinner from '../../../components/LoadingSpinner';
+import EditWorkSheetTable from './EditWorkSheetTable';
+import useAxiosSecure from '../../../hooks/useAxiosSecure';
+import Swal from 'sweetalert2';
 
 const WorkSheetTable = () => {
     const { user } = useAuth();
     const { workSheet, workSheetLoading, refetch } = useWorkSheet();
     const [selectedEntry, setSelectedEntry] = useState(null);
+    const axiosSecure = useAxiosSecure();
 
     const handleEditEntry = (entry) => {
         setSelectedEntry(entry);
@@ -19,8 +22,35 @@ const WorkSheetTable = () => {
         setSelectedEntry(null);
     };
 
-    const handleDeleteEntry = () => {
-        // Function to be implemented
+    const handleDeleteEntry = async (entry) => {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                const res = await axiosSecure.delete(`/workSheet/${entry._id}`)
+                    .then(res => {
+                        if (res.data.deletedCount > 0) {
+                            Swal.fire({
+                                icon: 'success',
+                                toast: true,
+                                position: 'top',
+                                showConfirmButton: false,
+                                timer: 1500,
+                                title: 'Entry Deleted Successfully',
+                            })
+                            refetch();
+                        }
+                    }).catch(err => console.log(err));
+            }
+        })
+
+
     };
 
     if (workSheet[0] === null || workSheet.length === 0) {
@@ -58,7 +88,7 @@ const WorkSheetTable = () => {
                             className="hover:bg-neutral-50 dark:hover:bg-dark-background/50 border-2 border-neutral-200 dark:border-neutral-700"
                         >
                             <td className="p-4">{entry.task}</td>
-                            <td className="p-4">{entry.hours}</td>
+                            <td className="p-4">{entry.hours}h</td>
                             <td className="p-4">
                                 {entry.date
                                     ? new Date(entry.date).toLocaleDateString()
@@ -87,8 +117,8 @@ const WorkSheetTable = () => {
                 </tbody>
             </table>
             {selectedEntry && (
-                <EditWorkSheetTable 
-                    entry={selectedEntry} 
+                <EditWorkSheetTable
+                    entry={selectedEntry}
                     open={!!selectedEntry}
                     onClose={handleCloseModal}
                     refetch={refetch}

@@ -29,7 +29,6 @@ const EditWorkSheetTable = ({ entry, open, onClose, refetch }) => {
     ];
 
     const handleUpdate = async () => {
-        console.log(entry._id, selectedTask, hours, date);
         const updatedEntry = { task: selectedTask, hours: hours, date: date };
         const res = await axiosSecure.put(`/workSheet/${entry._id}`, updatedEntry)
             .then(res => {

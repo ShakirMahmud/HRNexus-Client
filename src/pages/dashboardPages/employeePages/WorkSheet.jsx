@@ -9,11 +9,11 @@ import {
 } from "@material-tailwind/react";
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import WorkSheetTable from '../../../components/WorkSheetTable';
 import Swal from 'sweetalert2';
 import useAxiosSecure from '../../../hooks/useAxiosSecure';
 import useAuth from '../../../hooks/useAuth';
 import useWorkSheet from '../../../hooks/useWorkSheet';
+import WorkSheetTable from './WorkSheetTable';
 
 const WorkSheet = () => {
     const [selectedTask, setSelectedTask] = useState('');
