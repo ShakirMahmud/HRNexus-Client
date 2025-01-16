@@ -60,7 +60,10 @@ const Register = () => {
                 email,
                 roleValue,
                 image: imageUrl,
-                bank_account_no
+                bank_account_no,
+                salary: 0,
+                designation: '',
+                isVerified: false
             };
             const response = await axiosPublic.post('/users', userData);
             Swal.fire({

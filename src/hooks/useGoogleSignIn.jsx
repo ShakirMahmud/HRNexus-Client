@@ -3,10 +3,12 @@ import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import useAuth from "./useAuth";
 import useAxiosPublic from "./useAxiosPublic";
+import useAxiosSecure from "./useAxiosSecure";
 
 const useGoogleSignIn = () => {
   const { setUser, signInWithGoogle } = useAuth();
   const axiosPublic = useAxiosPublic();
+  const axiosSecure = useAxiosSecure();
   const navigate = useNavigate();
 
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
@@ -17,7 +19,7 @@ const useGoogleSignIn = () => {
     try {
       const result = await signInWithGoogle();
       const user = result.user;
-      const response = await axiosPublic.get(`/users/check?email=${user.email}`);
+      const response = await axiosSecure.get(`/users/check?email=${user.email}`);
       if (response.data.exists && response.data.roleValue) {
         setUser(user);
         navigate("/");
@@ -25,7 +27,7 @@ const useGoogleSignIn = () => {
       }
       setPendingUser(user);
       setIsRoleModalOpen(true);
-      setRole(""); 
+      setRole("");
     } catch (err) {
       console.error(err);
       Swal.fire({
@@ -38,27 +40,30 @@ const useGoogleSignIn = () => {
 
   const handleRoleConfirm = async ({ role, bankAccountNo }) => {
     try {
-        const userData = {
-            name: pendingUser.displayName,
-            email: pendingUser.email,
-            roleValue: role,
-            image: pendingUser.photoURL || generateInitialAvatar(pendingUser.displayName),
-            bank_account_no: bankAccountNo,
-        };
+      const userData = {
+        name: pendingUser.displayName,
+        email: pendingUser.email,
+        roleValue: role,
+        image: pendingUser.photoURL || generateInitialAvatar(pendingUser.displayName),
+        bank_account_no: bankAccountNo,
+        salary: 0,
+        designation: '',
+        isVerified: false
+      };
 
-        await axiosPublic.post("/users", userData);
-        setUser(pendingUser);
-        setIsRoleModalOpen(false);
-        navigate("/");
+      await axiosPublic.post("/users", userData);
+      setUser(pendingUser);
+      setIsRoleModalOpen(false);
+      navigate("/");
     } catch (error) {
-        console.error("Error adding user:", error);
-        Swal.fire({
-            icon: "error",
-            title: "Registration Failed",
-            text: "Unable to complete registration.",
-        });
+      console.error("Error adding user:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Registration Failed",
+        text: "Unable to complete registration.",
+      });
     }
-};
+  };
   return {
     isRoleModalOpen,
     setIsRoleModalOpen,
