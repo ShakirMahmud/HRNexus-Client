@@ -46,7 +46,7 @@ const useGoogleSignIn = () => {
         roleValue: role,
         image: pendingUser.photoURL || generateInitialAvatar(pendingUser.displayName),
         bank_account_no: bankAccountNo,
-        salary: 0,
+        salaryPerHour: roleValue === 'HR' ? 2500 : 0,
         designation: '',
         isVerified: false
       };

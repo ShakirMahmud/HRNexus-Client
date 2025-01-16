@@ -61,7 +61,7 @@ const Register = () => {
                 roleValue,
                 image: imageUrl,
                 bank_account_no,
-                salary: 0,
+                salaryPerHour: roleValue === 'HR' ? 2500 : 0,
                 designation: '',
                 isVerified: false
             };

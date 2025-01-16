@@ -1,5 +1,4 @@
 import React, { useMemo, useState } from 'react';
-import { useQuery } from "@tanstack/react-query";
 import {
     flexRender,
     getCoreRowModel,
@@ -9,11 +8,6 @@ import {
     Card,
     Typography,
     Button,
-    Dialog,
-    DialogHeader,
-    DialogBody,
-    DialogFooter,
-    Input,
     Select,
     Option
 } from "@material-tailwind/react";
@@ -22,28 +16,56 @@ import useHR from "../../../hooks/useHR";
 import { X, Check, DollarSign } from 'lucide-react';
 import Swal from 'sweetalert2';
 import useUsers from '../../../hooks/useUsers';
+import { useQuery } from '@tanstack/react-query';
 
-// Predefined Designations
 const DESIGNATIONS = [
     'Sales Assistant',
     'Social Media Executive',
     'Digital Marketer',
     'Content Writer',
-    'HR Coordinator',
+    'Software Developer',
+    'Graphic Designer',
     'Customer Support Specialist'
 ];
 
 const EmployeeList = () => {
     const { isHR } = useHR();
     const axiosSecure = useAxiosSecure();
-    const [isPayModalOpen, setIsPayModalOpen] = useState(false);
-    const [selectedEmployee, setSelectedEmployee] = useState(null);
-
     const { hrsAndEmployees, isUsersLoading, refetch } = useUsers();
 
+    const { data: totalSalaries = [] } = useQuery({
+        queryKey: ['totalSalaries'],
+        queryFn: async () => {
+            const res = await axiosSecure.get('/workSheet/totalSalary');
+            return res.data;
+        }
+    });
+    console.log('totalSalaries', totalSalaries)
+
+    const enrichedEmployees = useMemo(() => {
+        return hrsAndEmployees.map(employee => {
+            const employeeSalary = totalSalaries.find(entry => entry._id === employee.email)?.totalSalary || 0;
+            return {
+                ...employee,
+                totalSalary: employeeSalary,
+            };
+        });
+    }, [hrsAndEmployees, totalSalaries]);
+    
+    
+    
     // Designation Change Handler
     const handleDesignationChange = async (employee, designation) => {
-        const updatedUser = { designation: designation };
+        const DESIGNATION_RATES = {
+            'Social Media Executive': 20,
+            'Sales Assistant': 25,
+            'Digital Marketer': 30,
+            'Content Writer': 22,
+            'Software Developer': 40,
+            'Graphic Designer': 35,
+            'Customer Support Specialist': 20
+        };
+        const updatedUser = { designation: designation, salaryPerHour: DESIGNATION_RATES[designation] };
         try {
             await axiosSecure.put(`/users/${employee._id}`, updatedUser)
                 .then(res => {
@@ -204,9 +226,10 @@ const EmployeeList = () => {
         },
         {
             header: 'Salary to Pay',
-            accessorKey: 'salary',
+            accessorKey: 'totalSalary',
             cell: info => `$${info.getValue() || 0}`
         },
+        
         {
             header: 'Actions',
             cell: ({ row }) => {
@@ -227,12 +250,12 @@ const EmployeeList = () => {
         }
     ], []);
 
-    // Create Table Instance
     const table = useReactTable({
-        data: hrsAndEmployees,
+        data: enrichedEmployees,
         columns,
         getCoreRowModel: getCoreRowModel()
     });
+    
 
 
     return (
@@ -275,8 +298,6 @@ const EmployeeList = () => {
                     ))}
                 </tbody>
             </table>
-
-            {/* <PayModal /> */}
         </Card>
     );
 };

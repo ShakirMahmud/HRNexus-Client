@@ -17,7 +17,7 @@ import WorkSheetTable from './WorkSheetTable';
 
 const WorkSheet = () => {
     const [selectedTask, setSelectedTask] = useState('');
-    const [hoursWorked, setHoursWorked] = useState('');
+    const [hoursWorked, setHoursWorked] = useState(0);
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [workSheetEntries, setWorkSheetEntries] = useState([]);
     const [editingEntry, setEditingEntry] = useState(null);
@@ -124,7 +124,7 @@ const WorkSheet = () => {
                             type="number"
                             value={hoursWorked}
                             required
-                            onChange={(e) => setHoursWorked(e.target.value)}
+                            onChange={(e) => setHoursWorked(parseFloat(e.target.value))}
                             label="Hours"
                             color="blue"
                             className="bg-neutral-50 dark:bg-dark-background"
