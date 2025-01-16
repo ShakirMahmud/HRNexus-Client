@@ -49,8 +49,6 @@ const WorkSheetTable = () => {
                     }).catch(err => console.log(err));
             }
         })
-
-
     };
 
     if (workSheet[0] === null || workSheet.length === 0) {

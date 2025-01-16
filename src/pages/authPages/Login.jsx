@@ -3,27 +3,18 @@ import {
   Input,
   Button,
   Typography,
-  Select,
-  Option,
-  Dialog,
-  DialogHeader,
-  DialogBody,
-  DialogFooter,
 } from "@material-tailwind/react";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { Link, useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import Swal from "sweetalert2";
-import useAxiosPublic from "../../hooks/useAxiosPublic";
+import useGoogleSignIn from "../../hooks/useGoogleSignIn";
+import RoleSelectionModal from "./RoleSelectionModal";
 const Login = () => {
   const [isClicked, setIsClicked] = useState(true);
-  const { userLogin, setUser, signInWithGoogle } = useAuth();
+  const { userLogin, setUser } = useAuth();
   const navigate = useNavigate();
-  const axiosPublic = useAxiosPublic();
-  const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
-  const [selectedRole, setSelectedRole] = useState('');
-  const [pendingUser, setPendingUser] = useState(null);
 
   const handleSignIn = (e) => {
     e.preventDefault();
@@ -41,108 +32,14 @@ const Login = () => {
       })
   }
 
-  const handleSignInWithGoogle = async () => {
-    try {
-      const result = await signInWithGoogle();
-      const user = result.user;
-
-      // Check if user exists in database
-      const response = await axiosPublic.get(`/users/check?email=${user.email}`);
-
-      // If user exists and has a role, navigate directly
-      if (response.data.exists && response.data.roleValue) {
-        setUser(user);
-        navigate('/');
-        return;
-      }
-
-      // If no role, always open modal
-      setPendingUser(user);
-      setIsRoleModalOpen(true);
-      setSelectedRole(''); // Reset selected role
-    }
-    catch (err) {
-      console.error(err);
-      Swal.fire({
-        icon: 'error',
-        title: 'Google Sign In Failed',
-        text: err.message
-      });
-    }
-  }
-
-  // Prevent unnecessary re-renders
-  const handleRoleSelection = useCallback(async () => {
-    if (!pendingUser || !selectedRole) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Role Selection Required',
-        text: 'Please select a role to continue'
-      });
-      return;
-    }
-
-    try {
-      const userData = {
-        name: pendingUser.displayName,
-        email: pendingUser.email,
-        roleValue: selectedRole,
-        image: pendingUser.photoURL || generateInitialAvatar(pendingUser.displayName)
-      };
-
-      await axiosPublic.post('/users', userData);
-
-      setUser(pendingUser);
-      setIsRoleModalOpen(false);
-      navigate('/');
-    } catch (error) {
-      console.error('Error adding user:', error);
-      Swal.fire({
-        icon: 'error',
-        title: 'Registration Failed',
-        text: 'Unable to complete registration'
-      });
-    }
-  }, [pendingUser, selectedRole, axiosPublic, navigate, setUser]);
-
-  // Role Selection Modal
-  const RoleSelectionModal = () => (
-    <Dialog
-      open={isRoleModalOpen}
-      handler={() => { }}
-      dismissible={false}
-      animate={{
-        mount: { scale: 1, opacity: 1 },
-        unmount: { scale: 0.9, opacity: 0 },
-      }}
-      className="bg-transparent shadow-none"
-    >
-      <div className="bg-white rounded-lg p-6 max-w-md mx-auto">
-        <DialogHeader>Select Your Role</DialogHeader>
-        <DialogBody>
-          <Select
-            label="Choose Your Role"
-            value={selectedRole}
-            onChange={(value) => setSelectedRole(value)}
-          >
-            <Option value="Employee">Employee</Option>
-            <Option value="HR">HR</Option>
-          </Select>
-        </DialogBody>
-        <DialogFooter>
-          {/* Remove cancel button */}
-          <Button
-            variant="gradient"
-            color="green"
-            onClick={handleRoleSelection}
-            disabled={!selectedRole} // Disable until role is selected
-          >
-            Confirm Role
-          </Button>
-        </DialogFooter>
-      </div>
-    </Dialog>
-  );
+  const {
+    isRoleModalOpen,
+    setIsRoleModalOpen,
+    handleGoogleSignIn,
+    handleRoleConfirm,
+    role,
+    setRole,
+  } = useGoogleSignIn();
 
   return (
     <Card color="transparent" shadow={false} className="w-full min-h-screen flex justify-center items-center">
@@ -188,20 +85,26 @@ const Login = () => {
         <Typography color="gray" className="mt-4 text-center font-normal">
           Already have an account?{" "}
           <Link to="/register" className="font-medium text-gray-900">
-            Sign In
+            Sign Up
           </Link>
         </Typography>
       </form>
 
       <div className="w-full flex justify-center py-6">
         <button
-          onClick={handleSignInWithGoogle}
+          onClick={handleGoogleSignIn}
           className="flex items-center gap-2 px-6 py-3 bg-white text-gray-600 rounded-lg shadow hover:shadow-md transition-all duration-300 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
         >
           <FcGoogle size={24} />
           <span className="text-lg font-medium">Log In with Google</span>
         </button>
-        <RoleSelectionModal />
+        <RoleSelectionModal
+          isOpen={isRoleModalOpen}
+          onClose={() => setIsRoleModalOpen(false)}
+          onConfirm={handleRoleConfirm}
+          role={role}
+          setRole={setRole}
+        />
       </div>
     </Card>
   );
