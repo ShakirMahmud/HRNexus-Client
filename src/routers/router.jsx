@@ -11,6 +11,8 @@ import EmployeeRoute from "./EmployeeRoute";
 import WorkSheet from "../pages/dashboardPages/employeePages/WorkSheet";
 import HRRoute from "./HRRoute";
 import EmployeeList from "../pages/dashboardPages/hrPages/EmployeeList";
+import EmployeeDetails from "../pages/dashboardPages/hrPages/EmployeeDetails";
+import Progress from "../pages/dashboardPages/hrPages/Progress";
 
 
 export const router = createBrowserRouter([
@@ -57,8 +59,14 @@ export const router = createBrowserRouter([
                 path: 'employee-list',
                 element: <HRRoute><EmployeeList/></HRRoute>
             },
-            {},
-            {},
+            {
+                path: 'employee-details/:id',
+                element: <HRRoute><EmployeeDetails/></HRRoute>
+            },
+            {
+                path: 'progress',
+                element: <HRRoute><Progress/></HRRoute>
+            },
             {},
             {},
             // admin routes

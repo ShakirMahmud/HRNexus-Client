@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
-import { FaCreditCard, FaMoneyCheckAlt } from 'react-icons/fa';
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import Swal from "sweetalert2";
 import { 
@@ -13,6 +12,7 @@ import {
     Select, 
     Typography 
 } from "@material-tailwind/react";
+import usePayment from "../../../hooks/usePayment";
 
 const CheckoutModal = ({ employee, isOpen, onClose }) => {
     const stripe = useStripe();
@@ -25,6 +25,17 @@ const CheckoutModal = ({ employee, isOpen, onClose }) => {
     const [error, setError] = useState(null);
     const [clientSecret, setClientSecret] = useState('');
 
+    const { payments } = usePayment();
+
+    // Check if payment already exists for the selected month and year
+    const isPaymentAlreadyMade = () => {
+        return payments.some(payment => 
+            payment.employeeEmail === employee.email && 
+            payment.month === parseInt(month) && 
+            payment.year === parseInt(year)
+        );
+    };
+
     // Create payment intent when modal opens and total salary is available
     useEffect(() => {
         if (isOpen && employee?.totalSalary > 0) {
@@ -32,7 +43,6 @@ const CheckoutModal = ({ employee, isOpen, onClose }) => {
                 salary: employee.totalSalary
             })
             .then(response => {
-                console.log(response.data.clientSecret);
                 setClientSecret(response.data.clientSecret);
             })
             .catch(error => {
@@ -44,30 +54,31 @@ const CheckoutModal = ({ employee, isOpen, onClose }) => {
 
     const handlePayment = async (event) => {
         event.preventDefault();
-        setProcessing(true);
-
-        // Validation checks
         if (!month || !year) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Incomplete Information',
-                text: 'Please provide both month and year'
-            });
-            setProcessing(false);
+            setError("Please provide both month and year");
+            return;
+        }
+
+        // Check for duplicate payment
+        if (isPaymentAlreadyMade()) {
+            setError(`Payment for ${month}/${year} already exists`);
             return;
         }
 
         if (!stripe || !elements) {
-            setProcessing(false);
+            setError("Payment processing unavailable");
             return;
         }
 
         const card = elements.getElement(CardElement);
 
         if (!card) {
-            setProcessing(false);
+            setError("Card details not found");
             return;
         }
+
+        setProcessing(true);
+        setError(null);
 
         try {
             // Confirm card payment
@@ -95,8 +106,8 @@ const CheckoutModal = ({ employee, isOpen, onClose }) => {
                 const paymentRequest = {
                     employeeEmail: employee.email,
                     employeeName: employee.name,
-                    month,
-                    year,
+                    month: parseInt(month),
+                    year: parseInt(year),
                     amount: employee.totalSalary,
                     transactionId: paymentIntent.id,
                     status: 'pending'
@@ -105,10 +116,15 @@ const CheckoutModal = ({ employee, isOpen, onClose }) => {
                 // Submit payment request to backend
                 await axiosSecure.post('/payments', paymentRequest);
 
+                // Show success toast
                 Swal.fire({
                     icon: 'success',
                     title: 'Payment Successful',
-                    text: `Payment for ${employee.name} has been processed`
+                    text: `Payment for ${employee.name} has been processed`,
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000
                 });
 
                 setProcessing(false);
@@ -135,7 +151,11 @@ const CheckoutModal = ({ employee, isOpen, onClose }) => {
                         <Select
                             label="Payment Month"
                             value={month}
-                            onChange={(value) => setMonth(value)}
+                            onChange={(value) => {
+                                setMonth(value);
+                                setError(null); 
+                            }}
+                            error={!!error} 
                         >
                             {[...Array(12)].map((_, index) => (
                                 <Option key={index + 1} value={index + 1}>
@@ -146,7 +166,11 @@ const CheckoutModal = ({ employee, isOpen, onClose }) => {
                         <Select
                             label="Payment Year"
                             value={year}
-                            onChange={(value) => setYear(value)}
+                            onChange={(value) => {
+                                setYear(value);
+                                setError(null); 
+                            }}
+                            error={!!error}
                         >
                             {[2023, 2024, 2025].map((yearOption) => (
                                 <Option key={yearOption} value={yearOption}>
@@ -175,7 +199,7 @@ const CheckoutModal = ({ employee, isOpen, onClose }) => {
 
                     {/* Error Display */}
                     {error && (
-                        <Typography color="red" variant="small">
+                        <Typography color="red" variant="small" className="mt-2">
                             {error}
                         </Typography>
                     )}

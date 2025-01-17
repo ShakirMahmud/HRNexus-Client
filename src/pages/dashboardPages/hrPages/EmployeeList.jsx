@@ -7,6 +7,7 @@ import useAxiosSecure from '../../../hooks/useAxiosSecure';
 import Swal from 'sweetalert2';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
+import { useNavigate } from 'react-router-dom';
 
 const stripePromise = loadStripe(import.meta.env.VITE_Payment_Gateway_Key);
 const EmployeeListPage = () => {
@@ -15,6 +16,7 @@ const EmployeeListPage = () => {
     const [selectedEmployee, setSelectedEmployee] = useState(null);
     const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
     const { hrsAndEmployees, isUsersLoading, refetch } = useUsers();
+    const navigate = useNavigate();
 
     // All existing state and query hooks
     const { data: totalSalaries = [], refetch: refetchTotalSalaries } = useQuery({
@@ -131,14 +133,10 @@ const EmployeeListPage = () => {
 
     // Navigate to Employee Details
     const navigateToEmployeeDetails = (employee) => {
-        // Use React Router to navigate
-        navigate(`/employee-details/${employee._id}`);
-    };
-
-    // Navigate to Checkout
-    const navigateToCheckout = (employee) => {
-        // Use React Router to navigate
-        navigate(`/checkout/${employee._id}`);
+        // console.log(employee)
+        navigate(`/dashboard/employee-details/${employee._id}`, {
+            state: { employee }
+        })
     };
 
     return (
