@@ -54,6 +54,7 @@ const useGoogleSignIn = () => {
 };
 
   const handleRoleConfirm = async ({ role, bankAccountNo }) => {
+    console.log(role);
     try {
       const userData = {
         name: pendingUser.displayName,
@@ -61,7 +62,7 @@ const useGoogleSignIn = () => {
         roleValue: role,
         image: pendingUser.photoURL || generateInitialAvatar(pendingUser.displayName),
         bank_account_no: bankAccountNo,
-        salaryPerHour: roleValue === 'HR' ? 2500 : 0,
+        salaryPerHour: role === 'HR' ? 2500 : 0,
         designation: '',
         isVerified: false
       };

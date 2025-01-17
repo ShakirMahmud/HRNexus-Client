@@ -13,15 +13,21 @@ import {
     BanIcon
 } from 'lucide-react';
 import SalaryAdjustmentModal from './SalaryAdjustmentModal';
+import useAxiosSecure from '../../../hooks/useAxiosSecure';
+import Swal from 'sweetalert2';
 
-const EmployeeTable = ({ employees, onFireEmployee, refetch }) => {
+const EmployeeTable = ({ employees, onFireEmployee, refetch, handleMakeHR }) => {
     const [selectedEmployee, setSelectedEmployee] = useState(null);
     const [isSalaryModalOpen, setIsSalaryModalOpen] = useState(false);
+    const axiosSecure = useAxiosSecure();
 
     const handleOpenSalaryModal = (employee) => {
         setSelectedEmployee(employee);
         setIsSalaryModalOpen(true);
     };
+
+    
+    
 
     return (
         <Card className="w-full overflow-x-auto shadow-lg">
@@ -112,7 +118,7 @@ const EmployeeTable = ({ employees, onFireEmployee, refetch }) => {
                                                 size="sm"
                                                 color="blue"
                                                 variant="outlined"
-                                                onClick={() => {/* Logic to make HR */ }}
+                                                onClick={() => {handleMakeHR(employee)}}
                                             >
                                                 Make HR
                                             </Button>

@@ -75,15 +75,22 @@ const AuthProvider = ({ children }) => {
                             title: "Access Denied",
                             text: "Your account has been terminated. Please contact support.",
                         });
-                    } else if (!userData.roleValue) {
-                        // Log out and notify if roleValue is missing
-                        await logOut();
-                        Swal.fire({
-                            icon: "error",
-                            title: "Role Required",
-                            text: "Please set your role to access the site.",
-                        });
-                    } else {
+                    } 
+                    // else if (!userData.roleValue) {
+                        
+                    //     await logOut();
+                    //     console.log('userLoggedOut');
+                    //     Swal.fire({
+                    //         icon: "error",
+                    //         toast: true,
+                    //         position: "top",
+                    //         showConfirmButton: false,
+                    //         timer: 1500,
+                    //         title: "Role Required",
+                    //         text: "Please set your role to access the site.",
+                    //     });
+                    // } 
+                    else {
                         // User is valid; set token
                         const userInfo = { email: currentUser.email };
                         const tokenResponse = await axiosPublic.post('/jwt', userInfo);

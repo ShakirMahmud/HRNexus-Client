@@ -35,11 +35,11 @@ const SalaryAdjustmentModal = ({ isOpen, onClose, employee, refetch }) => {
         const isHR = employee.roleValue === 'HR';
         
         const currentSalaryDisplay = isHR 
-            ? `$${((employee.salaryPerHour || 0) * 160).toFixed(2)} /month`
+            ? `$${((employee.salaryPerHour || 0) ).toFixed(2)} /month`
             : `$${(employee.salaryPerHour || 0).toFixed(2)} /hour`;
 
         const initialSalary = isHR 
-            ? ((employee.salaryPerHour || 0) * 160).toFixed(2)
+            ? ((employee.salaryPerHour || 0)).toFixed(2)
             : (employee.salaryPerHour || 0).toFixed(2);
 
         return {
