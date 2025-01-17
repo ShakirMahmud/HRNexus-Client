@@ -2,13 +2,15 @@ import React, { useState } from 'react';
 import {
     Button,
     Card,
-    Typography
+    Typography,
+    Tooltip
 } from "@material-tailwind/react";
 import {
     UserIcon,
     BadgeCheckIcon,
     DollarSignIcon,
-    TrashIcon
+    TrashIcon,
+    BanIcon
 } from 'lucide-react';
 import SalaryAdjustmentModal from './SalaryAdjustmentModal';
 
@@ -51,6 +53,7 @@ const EmployeeTable = ({ employees, onFireEmployee, refetch }) => {
                 <tbody>
                     {employees.map((employee) => {
                         const isHR = employee.roleValue === 'HR';
+                        const isFired = employee.isFired;
                         const salaryDisplay = isHR
                             ? `$${(employee.salaryPerHour).toFixed(2)} /month`
                             : `$${employee.salaryPerHour.toFixed(2)} /hour`;
@@ -58,16 +61,27 @@ const EmployeeTable = ({ employees, onFireEmployee, refetch }) => {
                         return (
                             <tr
                                 key={employee._id}
-                                className="hover:bg-blue-gray-50 transition-colors"
+                                className={`hover:bg-blue-gray-50 transition-colors ${isFired ? 'opacity-50 bg-red-50' : ''}`}
                             >
                                 <td className="p-4 border-b border-blue-gray-50">
                                     <div className="flex items-center gap-3">
-                                        <img
-                                            src={employee.image}
-                                            alt={employee.name}
-                                            className="h-10 w-10 rounded-full object-cover"
-                                        />
-                                        <Typography variant="small" color="blue-gray">
+                                        <div className="relative">
+                                            <img
+                                                src={employee.image}
+                                                alt={employee.name}
+                                                className="h-10 w-10 rounded-full object-cover"
+                                            />
+                                            {isFired && (
+                                                <div className="absolute bottom-0 right-0 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center">
+                                                    <BanIcon className="h-3 w-3" />
+                                                </div>
+                                            )}
+                                        </div>
+                                        <Typography 
+                                            variant="small" 
+                                            color={isFired ? "red" : "blue-gray"}
+                                            className={isFired ? "line-through" : ""}
+                                        >
                                             {employee.name}
                                         </Typography>
                                     </div>
@@ -75,20 +89,25 @@ const EmployeeTable = ({ employees, onFireEmployee, refetch }) => {
                                 <td className="p-4 border-b border-blue-gray-50">
                                     <Typography
                                         variant="small"
-                                        color={isHR ? "green" : "blue-gray"}
+                                        color={isFired ? "red" : (isHR ? "green" : "blue-gray")}
                                         className="font-medium"
                                     >
                                         {employee.roleValue}
+                                        {isFired && " (Fired)"}
                                     </Typography>
                                 </td>
                                 <td className="p-4 border-b border-blue-gray-50">
-                                    <Typography variant="small" color="blue-gray">
+                                    <Typography 
+                                        variant="small" 
+                                        color={isFired ? "red" : "blue-gray"}
+                                        className={isFired ? "line-through" : ""}
+                                    >
                                         {salaryDisplay}
                                     </Typography>
                                 </td>
                                 <td className="p-4 border-b border-blue-gray-50 text-center">
                                     <div className="flex justify-center space-x-2">
-                                        {!isHR && (
+                                        {!isHR && !isFired && (
                                             <Button
                                                 size="sm"
                                                 color="blue"
@@ -98,18 +117,32 @@ const EmployeeTable = ({ employees, onFireEmployee, refetch }) => {
                                                 Make HR
                                             </Button>
                                         )}
-                                        <Button
-                                            size="sm"
-                                            color="red"
-                                            variant="outlined"
-                                            onClick={() => onFireEmployee(employee)}
-                                        >
-                                            <TrashIcon className="h-4 w-4 mr-1" /> Fire
-                                        </Button>
+                                        {isFired ? (
+                                            <Tooltip content="Employee has been fired">
+                                                <Button
+                                                    size="sm"
+                                                    color="red"
+                                                    variant="text"
+                                                    disabled
+                                                >
+                                                    <BanIcon className="h-4 w-4 mr-1" /> Fired
+                                                </Button>
+                                            </Tooltip>
+                                        ) : (
+                                            <Button
+                                                size="sm"
+                                                color="red"
+                                                variant="outlined"
+                                                onClick={() => onFireEmployee(employee)}
+                                            >
+                                                <TrashIcon className="h-4 w-4 mr-1" /> Fire
+                                            </Button>
+                                        )}
                                         <Button
                                             size="sm"
                                             color="green"
                                             onClick={() => handleOpenSalaryModal(employee)}
+                                            disabled={isFired}
                                         >
                                             Adjust Salary
                                         </Button>

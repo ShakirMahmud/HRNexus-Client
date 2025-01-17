@@ -2,6 +2,7 @@ import { createContext, useEffect, useState } from "react";
 import { auth } from './../firebase/firebase.config';
 import { createUserWithEmailAndPassword, GoogleAuthProvider, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut, updateProfile } from "firebase/auth";
 import useAxiosPublic from "../hooks/useAxiosPublic";
+import Swal from "sweetalert2";
 
 export const AuthContext = createContext();
 const AuthProvider = ({ children }) => {
@@ -23,23 +24,23 @@ const AuthProvider = ({ children }) => {
         return signInWithEmailAndPassword(auth, email, password);
     }
 
-    //google sign in
-    const signInWithGoogle = () => {
-        setLoading(true);
-        return signInWithPopup(auth, googleProvider);
-    }
-
+    
     //logout
     const logOut = () => {
         setLoading(true);
         return signOut(auth);
     }
-
+    
     //update profile
     const updateUserProfile = updatedData => {
         return updateProfile(auth.currentUser, updatedData);
     }
-
+    
+    //google sign in
+    const signInWithGoogle = () => {
+        setLoading(true);
+        return signInWithPopup(auth, googleProvider);
+    }
     //auth info
     const authInfo = {
         user,
@@ -55,31 +56,58 @@ const AuthProvider = ({ children }) => {
 
     //observer
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, async currentUser => {
-            setUser(currentUser);
-            setLoading(false);
-            console.log('current user', currentUser);
-            if(currentUser){
-                // create token
-                const userInfo = { email: currentUser.email}
-                axiosPublic.post('/jwt', userInfo)
-                    .then(data => {
-                        if(data.data.token){
-                            // set token
-                            localStorage.setItem('token', data.data.token);
-                            setLoading(false);
+        const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+            setLoading(true); // Show loading while checks are in progress
+    
+            if (currentUser) {
+                setUser(currentUser);
+    
+                try {
+                    // Fetch user data from your backend
+                    const response = await axiosPublic.get(`/users/check?email=${currentUser.email}`);
+                    const userData = response.data;
+    
+                    if (userData.isFired) {
+                        // Log out and notify if the user is fired
+                        await logOut();
+                        Swal.fire({
+                            icon: "error",
+                            title: "Access Denied",
+                            text: "Your account has been terminated. Please contact support.",
+                        });
+                    } else if (!userData.roleValue) {
+                        // Log out and notify if roleValue is missing
+                        await logOut();
+                        Swal.fire({
+                            icon: "error",
+                            title: "Role Required",
+                            text: "Please set your role to access the site.",
+                        });
+                    } else {
+                        // User is valid; set token
+                        const userInfo = { email: currentUser.email };
+                        const tokenResponse = await axiosPublic.post('/jwt', userInfo);
+                        if (tokenResponse.data.token) {
+                            localStorage.setItem('token', tokenResponse.data.token);
                         }
-                    })
-            }else{
-                // remove token
+                    }
+                } catch (error) {
+                    console.error("Error checking user state:", error);
+                }
+            } else {
+                // User not logged in; clear any stored tokens
+                setUser(null);
                 localStorage.removeItem('token');
-                setLoading(false);
             }
+    
+            setLoading(false);
         });
+    
         return () => {
             unsubscribe();
-        }
-    }, [])
+        };
+    }, []);
+    
 
     return (
         <AuthContext.Provider value={authInfo}>

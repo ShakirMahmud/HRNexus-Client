@@ -11,26 +11,51 @@ import useAuth from "../../hooks/useAuth";
 import Swal from "sweetalert2";
 import useGoogleSignIn from "../../hooks/useGoogleSignIn";
 import RoleSelectionModal from "./RoleSelectionModal";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 const Login = () => {
   const [isClicked, setIsClicked] = useState(true);
-  const { userLogin, setUser } = useAuth();
+  const { userLogin, setUser, logOut } = useAuth();
   const navigate = useNavigate();
+  const axiosSecure = useAxiosSecure();
 
-  const handleSignIn = (e) => {
+  const handleSignIn = async (e) => {
     e.preventDefault();
     const form = new FormData(e.target);
     const email = form.get('email');
     const password = form.get('password');
-    userLogin(email, password)
-      .then(result => {
+
+    try {
+        const result = await userLogin(email, password);
         const user = result.user;
+
+        // Check if the user is fired
+        const response = await axiosSecure.get(`/users/check?email=${user.email}`);
+        const userData = response.data;
+
+        if (userData.isFired) {
+            // Log the user out and notify them
+            await logOut();
+            Swal.fire({
+                icon: "error",
+                title: "Access Denied",
+                text: "Your account has been terminated. Please contact support.",
+            });
+            return; 
+        }
+
+        // If not fired, allow login
         setUser(user);
         navigate('/');
-      })
-      .catch(err => {
+    } catch (err) {
         console.error(err);
-      })
-  }
+        Swal.fire({
+            icon: "error",
+            title: "Login Failed",
+            text: err.message,
+        });
+    }
+};
+
 
   const {
     isRoleModalOpen,

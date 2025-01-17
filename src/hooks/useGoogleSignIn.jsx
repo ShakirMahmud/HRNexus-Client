@@ -6,7 +6,7 @@ import useAxiosPublic from "./useAxiosPublic";
 import useAxiosSecure from "./useAxiosSecure";
 
 const useGoogleSignIn = () => {
-  const { setUser, signInWithGoogle } = useAuth();
+  const { setUser, signInWithGoogle, logOut } = useAuth();
   const axiosPublic = useAxiosPublic();
   const axiosSecure = useAxiosSecure();
   const navigate = useNavigate();
@@ -17,26 +17,41 @@ const useGoogleSignIn = () => {
 
   const handleGoogleSignIn = async () => {
     try {
-      const result = await signInWithGoogle();
-      const user = result.user;
-      const response = await axiosSecure.get(`/users/check?email=${user.email}`);
-      if (response.data.exists && response.data.roleValue) {
-        setUser(user);
-        navigate("/");
-        return;
-      }
-      setPendingUser(user);
-      setIsRoleModalOpen(true);
-      setRole("");
+        const result = await signInWithGoogle();
+        const user = result.user;
+
+        // Check if user exists and their status
+        const response = await axiosSecure.get(`/users/check?email=${user.email}`);
+        const userData = response.data;
+        console.log('userData', userData);
+
+        if (userData.exists && !userData.isFired && userData.roleValue) {
+            // User is valid and has a role
+            setUser(user);
+            navigate("/");
+        } else if (userData.isFired) {
+          console.log('User is fired');
+            // Fired user
+            await logOut();
+            Swal.fire({
+                icon: "error",
+                title: "Access Denied",
+                text: "Your account has been terminated. Please contact support.",
+            });
+        } else {
+            // New user or role pending
+            setPendingUser(user);
+            setIsRoleModalOpen(true);
+        }
     } catch (err) {
-      console.error(err);
-      Swal.fire({
-        icon: "error",
-        title: "Google Sign In Failed",
-        text: err.message,
-      });
+        console.error(err);
+        Swal.fire({
+            icon: "error",
+            title: "Google Sign-In Failed",
+            text: err.message,
+        });
     }
-  };
+};
 
   const handleRoleConfirm = async ({ role, bankAccountNo }) => {
     try {
