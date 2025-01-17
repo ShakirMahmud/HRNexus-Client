@@ -95,7 +95,6 @@ const DashboardLayout = () => {
                     <>
                         <NavLink
                             to="/dashboard/all-employee-list"
-
                             className={({ isActive }) =>
                                 `flex items-center gap-3 py-3 px-4 rounded-lg ${isActive
                                     ? "bg-blue-500 text-white"
@@ -107,6 +106,20 @@ const DashboardLayout = () => {
                                 <InboxIcon className="h-5 w-5" />
                             </ListItemPrefix>
                             All Employee List
+                        </NavLink>
+                        <NavLink
+                            to="/dashboard/payroll"
+                            className={({ isActive }) =>
+                                `flex items-center gap-3 py-3 px-4 rounded-lg ${isActive
+                                    ? "bg-blue-500 text-white"
+                                    : "text-gray-700 hover:bg-blue-50"
+                                }`
+                            }
+                        >
+                            <ListItemPrefix>
+                                <InboxIcon className="h-5 w-5" />
+                            </ListItemPrefix>
+                            Payroll
                         </NavLink>
                     </>
                 )}
