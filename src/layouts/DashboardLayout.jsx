@@ -157,6 +157,21 @@ const DashboardLayout = () => {
                             </ListItemPrefix>
                             Progress
                         </NavLink>
+                        <NavLink
+                            to="/dashboard/payment_history"
+
+                            className={({ isActive }) =>
+                                `flex items-center gap-3 py-3 px-4 rounded-lg ${isActive
+                                    ? "bg-blue-500 text-white"
+                                    : "text-gray-700 hover:bg-blue-50"
+                                }`
+                            }
+                        >
+                            <ListItemPrefix>
+                                <InboxIcon className="h-5 w-5" />
+                            </ListItemPrefix>
+                            Payment History
+                        </NavLink>
                     </>
                 )}
 
@@ -177,6 +192,21 @@ const DashboardLayout = () => {
                                 <InboxIcon className="h-5 w-5" />
                             </ListItemPrefix>
                             My Work-Sheet
+                        </NavLink>
+                        <NavLink
+                            to="/dashboard/payment-history"
+
+                            className={({ isActive }) =>
+                                `flex items-center gap-3 py-3 px-4 rounded-lg ${isActive
+                                    ? "bg-blue-500 text-white"
+                                    : "text-gray-700 hover:bg-blue-50"
+                                }`
+                            }
+                        >
+                            <ListItemPrefix>
+                                <InboxIcon className="h-5 w-5" />
+                            </ListItemPrefix>
+                            Payment History
                         </NavLink>
                     </>
                 )}

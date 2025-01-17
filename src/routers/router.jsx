@@ -16,6 +16,7 @@ import Progress from "../pages/dashboardPages/hrPages/Progress";
 import AdminRoute from './AdminRoute';
 import AllEmployeeList from "../pages/dashboardPages/adminPages/AllEmployeeList";
 import Payroll from "../pages/dashboardPages/adminPages/Payroll";
+import PaymentHistory from "../pages/dashboardPages/employeePages/PaymentHistory";
 
 
 export const router = createBrowserRouter([
@@ -53,7 +54,10 @@ export const router = createBrowserRouter([
                 path: 'work-sheet',
                 element: <EmployeeRoute><WorkSheet/></EmployeeRoute>
             },
-            {},
+            {
+                path: 'payment-history',
+                element: <EmployeeRoute><PaymentHistory/></EmployeeRoute>
+            },
             {},
             {},
             {},
@@ -70,7 +74,10 @@ export const router = createBrowserRouter([
                 path: 'progress',
                 element: <HRRoute><Progress/></HRRoute>
             },
-            {},
+            {
+                path: 'payment_history',
+                element: <HRRoute><PaymentHistory/></HRRoute>
+            },
             {},
             // admin routes
             {
