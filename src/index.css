@@ -13,3 +13,11 @@ html {
       scrollbar-color: #4B5563 #1F2937;
     }
   }
+  [role="listbox"]{
+    background-color: #111827 !important;
+    
+  }
+  [role="listbox"] li:hover{
+    background-color: #1F2937 !important;
+    
+  }

@@ -138,14 +138,24 @@ const CheckoutModal = ({ employee, isOpen, onClose }) => {
     };
 
     return (
-        <Dialog open={isOpen} handler={onClose} size="md">
-            <DialogHeader>Salary Payment for {employee.name}</DialogHeader>
+        <Dialog 
+            open={isOpen} 
+            handler={onClose} 
+            size="md" 
+            className="dark:bg-dark-surface"
+        >
+            <DialogHeader className="text-neutral-800 dark:text-neutral-100 border-b border-neutral-200 dark:border-dark-neutral-300">
+                Salary Payment for {employee.name}
+            </DialogHeader>
             <DialogBody>
                 <div className="grid gap-4">
-                    <Typography>
-                        Total Salary: ${employee.totalSalary}
+                    <Typography className="text-neutral-800 dark:text-neutral-100">
+                        Total Salary: 
+                        <span className="text-primary-600 dark:text-dark-primary-400 ml-2">
+                            ${employee.totalSalary}
+                        </span>
                     </Typography>
-
+    
                     {/* Month and Year Selection */}
                     <div className="grid lg:grid-cols-2 gap-4">
                         <Select
@@ -155,10 +165,22 @@ const CheckoutModal = ({ employee, isOpen, onClose }) => {
                                 setMonth(value);
                                 setError(null); 
                             }}
-                            error={!!error} 
+                            error={!!error}
+                            className="dark:text-neutral-100"
+                            labelProps={{
+                                className: 'text-neutral-700 dark:text-neutral-300'
+                            }}
+                            
+                            menuProps={{
+                                className: "bg-white dark:bg-dark-neutral-800 text-neutral-800 dark:text-neutral-300"
+                            }}
                         >
                             {[...Array(12)].map((_, index) => (
-                                <Option key={index + 1} value={index + 1}>
+                                <Option 
+                                    key={index + 1} 
+                                    value={index + 1}
+                                    className="text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-dark-neutral-700"
+                                >
                                     {new Date(0, index).toLocaleString('default', { month: 'long' })}
                                 </Option>
                             ))}
@@ -171,23 +193,36 @@ const CheckoutModal = ({ employee, isOpen, onClose }) => {
                                 setError(null); 
                             }}
                             error={!!error}
+                            className="dark:text-neutral-100"
+                            labelProps={{
+                                className: 'text-neutral-700 dark:text-neutral-300'
+                            }}
+                            
+                            menuProps={{
+                                className: "bg-white dark:bg-dark-neutral-800 text-neutral-800 dark:text-neutral-300"
+                            }}
                         >
                             {[2023, 2024, 2025].map((yearOption) => (
-                                <Option key={yearOption} value={yearOption}>
+                                <Option 
+                                    key={yearOption} 
+                                    value={yearOption}
+                                    className="text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-dark-neutral-700"
+                                >
                                     {yearOption}
                                 </Option>
                             ))}
                         </Select>
                     </div>
-
+    
                     {/* Stripe Card Element */}
-                    <div className="bg-gray-100 p-4 rounded-lg">
+                    <div className="bg-neutral-100 dark:bg-dark-neutral-200 p-4 rounded-lg">
                         <CardElement
                             options={{
                                 style: {
                                     base: {
                                         fontSize: '16px',
-                                        color: '#424770',
+                                        color: '#757dbf',
+                                        backgroundColor: 'transparent',
                                     },
                                     invalid: {
                                         color: '#9e2146',
@@ -196,20 +231,25 @@ const CheckoutModal = ({ employee, isOpen, onClose }) => {
                             }}
                         />
                     </div>
-
+    
                     {/* Error Display */}
                     {error && (
-                        <Typography color="red" variant="small" className="mt-2">
+                        <Typography 
+                            color="red" 
+                            variant="small" 
+                            className="mt-2 text-danger-500 dark:text-danger-400"
+                        >
                             {error}
                         </Typography>
                     )}
                 </div>
             </DialogBody>
-            <DialogFooter>
+            <DialogFooter className="border-t border-neutral-200 dark:border-dark-neutral-300">
                 <Button 
                     color="blue" 
                     onClick={handlePayment}
                     disabled={processing || !stripe}
+                    className="dark:bg-primary-600 dark:hover:bg-primary-500 dark:text-white"
                 >
                     {processing ? 'Processing...' : 'Pay Salary'}
                 </Button>

@@ -71,26 +71,41 @@ const Progress = () => {
     }, []);
 
     return (
-        <div className="container mx-auto p-4 space-y-4">
+        <div className="container mx-auto p-4 space-y-4 dark:bg-dark-neutral-50">
             {/* Filters */}
-            <Card className="p-4">
+            <Card className="p-4 dark:bg-dark-neutral-100">
                 <div className="flex flex-col md:flex-row gap-4 mb-4">
-                    <div className="w-full md:w-1/2">
+                    <div className="w-full md:w-1/2 ">
                         <Typography
                             variant="small"
                             className="mb-2 flex items-center gap-2 text-neutral-700 dark:text-neutral-300"
                         >
-                            <User className="h-4 w-4" />
+                            <User className="h-4 w-4 text-primary-500 dark:text-dark-primary-400" />
                             Select Employee
                         </Typography>
                         <Select
                             label="Select Employee"
                             value={selectedEmployee}
                             onChange={(value) => setSelectedEmployee(value || '')}
+                            labelProps={{
+                                className: 'text-neutral-700  dark:!text-neutral-300 peer-focus:!text-primary-500 dark:peer-focus:!text-dark-primary-400'
+                            }}
+                            className="dark:text-neutral-100 dark:bg-dark-neutral-50"
+                            color="blue"
+                            variant="outlined"
                         >
-                            <Option value="">All Employees</Option>
+                            <Option
+                                value=""
+                                className="text-neutral-700  dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-dark-neutral-700"
+                            >
+                                All Employees
+                            </Option>
                             {employeeNames.map((name) => (
-                                <Option key={name} value={name}>
+                                <Option
+                                    key={name}
+                                    value={name}
+                                    className="text-neutral-700  dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-dark-neutral-700"
+                                >
                                     {name}
                                 </Option>
                             ))}
@@ -102,19 +117,31 @@ const Progress = () => {
                             variant="small"
                             className="mb-2 flex items-center gap-2 text-neutral-700 dark:text-neutral-300"
                         >
-                            <Calendar className="h-4 w-4" />
+                            <Calendar className="h-4 w-4 text-primary-500 dark:text-dark-primary-400" />
                             Select Month
                         </Typography>
                         <Select
                             label="Select Month"
                             value={selectedMonth}
                             onChange={(value) => setSelectedMonth(value || '')}
+                            labelProps={{
+                                className: 'text-neutral-700 dark:!text-neutral-300 peer-focus:!text-primary-500 dark:peer-focus:!text-dark-primary-400'
+                            }}
+                            className="dark:text-neutral-100"
+                            color="blue"
+                            variant="outlined"
                         >
-                            <Option value="">All Months</Option>
+                            <Option
+                                value=""
+                                className="text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-dark-neutral-700"
+                            >
+                                All Months
+                            </Option>
                             {[...Array(12)].map((_, index) => (
                                 <Option
                                     key={index + 1}
                                     value={`${index + 1}`}
+                                    className="text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-dark-neutral-700"
                                 >
                                     {new Date(0, index).toLocaleString('default', { month: 'long' })}
                                 </Option>
@@ -125,21 +152,26 @@ const Progress = () => {
 
                 {/* Total Hours */}
                 <div className="flex items-center gap-2 mt-4">
-                    <Clock className="h-6 w-6 text-primary-500" />
-                    <Typography variant="h6" className="font-semibold">
+                    <Clock className="h-6 w-6 text-primary-500 dark:text-dark-primary-400" />
+                    <Typography
+                        variant="h6"
+                        className="font-semibold text-neutral-800 dark:text-neutral-100"
+                    >
                         Total Hours:
-                        <span className="text-primary-600 ml-2">{totalHours.toFixed(2)}</span>
+                        <span className="text-primary-600 dark:text-dark-primary-400 ml-2">
+                            {totalHours.toFixed(2)}
+                        </span>
                     </Typography>
                 </div>
             </Card>
 
             {/* Work Records */}
-            <Card className="p-4">
+            <Card className="p-4 dark:bg-dark-neutral-100">
                 <Typography
                     variant="h5"
                     className="mb-4 flex items-center gap-2 text-neutral-700 dark:text-neutral-300"
                 >
-                    <ListChecks className="h-6 w-6 text-primary-500" />
+                    <ListChecks className="h-6 w-6 text-primary-500 dark:text-dark-primary-400" />
                     Work Records {selectedEmployee && `for ${selectedEmployee}`}
                 </Typography>
 
@@ -148,7 +180,13 @@ const Progress = () => {
                         dataLength={visibleRecords}
                         next={loadMore}
                         hasMore={visibleRecords < filteredWorkSheet.length}
-                        loader={<Typography className="text-center my-4">Loading more...</Typography>}
+                        loader={
+                            <Typography
+                                className="text-center my-4 text-neutral-600 dark:text-neutral-300"
+                            >
+                                Loading more...
+                            </Typography>
+                        }
                     >
                         {/* Desktop View */}
                         <div className="hidden md:block">
@@ -158,7 +196,7 @@ const Progress = () => {
                                     <div key={key} className="mb-6">
                                         <Typography
                                             variant="h6"
-                                            className="mb-3 text-primary-600 dark:text-primary-300 border-b pb-2"
+                                            className="mb-3 text-primary-600 dark:text-dark-primary-400 border-b pb-2"
                                         >
                                             {new Date(0, month - 1).toLocaleString('default', { month: 'long' })} {year}
                                         </Typography>
@@ -166,20 +204,20 @@ const Progress = () => {
                                         <table className="w-full table-auto">
                                             <thead>
                                                 <tr className="bg-neutral-50 dark:bg-dark-neutral-200">
-                                                    <th className="p-2 text-left w-1/4">Task</th>
-                                                    <th className="p-2 text-left w-1/3">Entry By</th>
-                                                    <th className="p-2 text-center w-1/4">Hours</th>
-                                                    <th className="p-2 text-right w-1/4">Date</th>
+                                                    <th className="p-2 text-left w-1/4 text-neutral-700 dark:text-neutral-300">Task</th>
+                                                    <th className="p-2 text-left w-1/3 text-neutral-700 dark:text-neutral-300">Entry By</th>
+                                                    <th className="p-2 text-center w-1/4 text-neutral-700 dark:text-neutral-300">Hours</th>
+                                                    <th className="p-2 text-right w-1/4 text-neutral-700 dark:text-neutral-300">Date</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 {records.map((record) => (
                                                     <tr
                                                         key={record._id}
-                                                        className="hover:bg-neutral-50 dark:hover:bg-dark-background/50"
+                                                        className="hover:bg-neutral-50 dark:hover:bg-dark-neutral-300"
                                                     >
-                                                        <td className="p-2 border-b">{record.task}</td>
-                                                        <td className="p-2 border-b">{record.email}</td>
+                                                        <td className="p-2 border-b text-neutral-800 dark:text-neutral-100">{record.task}</td>
+                                                        <td className="p-2 border-b text-neutral-800 dark:text-neutral-100">{record.email}</td>
                                                         <td className="p-2 border-b text-center">
                                                             <div className="inline-block">
                                                                 <Chip
@@ -187,11 +225,11 @@ const Progress = () => {
                                                                     color="blue"
                                                                     size="sm"
                                                                     value={`${record.hours}h`}
-                                                                    className="w-[60px] text-center justify-center"
+                                                                    className="w-[60px] text-center justify-center dark:text-neutral-300"
                                                                 />
                                                             </div>
                                                         </td>
-                                                        <td className="p-2 border-b text-right">
+                                                        <td className="p-2 border-b text-right text-neutral-800 dark:text-neutral-100">
                                                             {new Date(record.date).toLocaleDateString()}
                                                         </td>
                                                     </tr>
@@ -211,7 +249,7 @@ const Progress = () => {
                                     <div key={key}>
                                         <Typography
                                             variant="h6"
-                                            className="mb-3 text-primary-600 dark:text-primary-300 border-b pb-2"
+                                            className="mb-3 text-primary-600 dark:text-dark-primary-400 border-b pb-2"
                                         >
                                             {new Date(0, month - 1).toLocaleString('default', { month: 'long' })} {year}
                                         </Typography>
@@ -219,10 +257,13 @@ const Progress = () => {
                                         {records.map((record) => (
                                             <Card
                                                 key={record._id}
-                                                className="mb-4 p-4 border border-neutral-200 dark:border-dark-neutral-300"
+                                                className="mb-4 p-4 border border-neutral-200 dark:border-dark-neutral-300 dark:bg-dark-neutral-200"
                                             >
                                                 <div className="flex justify-between items-center mb-2">
-                                                    <Typography variant="small" className="font-bold">
+                                                    <Typography
+                                                        variant="small"
+                                                        className="font-bold text-neutral-800 dark:text-neutral-100"
+                                                    >
                                                         {record.task}
                                                     </Typography>
                                                     <Chip
@@ -230,22 +271,35 @@ const Progress = () => {
                                                         color="blue"
                                                         size="sm"
                                                         value={`${record.hours}h`}
+                                                        className="dark:text-neutral-300"
                                                     />
                                                 </div>
                                                 <div className="grid grid-cols-2 gap-2">
                                                     <div>
-                                                        <Typography variant="small" className="text-neutral-600 dark:text-neutral-400">
+                                                        <Typography
+                                                            variant="small"
+                                                            className="text-neutral-600 dark:text-neutral-400"
+                                                        >
                                                             Entry By
                                                         </Typography>
-                                                        <Typography variant="small">
+                                                        <Typography
+                                                            variant="small"
+                                                            className="text-neutral-800 dark:text-neutral-100"
+                                                        >
                                                             {record.email}
                                                         </Typography>
                                                     </div>
                                                     <div>
-                                                        <Typography variant="small" className="text-neutral-600 dark:text-neutral-400">
+                                                        <Typography
+                                                            variant="small"
+                                                            className="text-neutral-600 dark:text-neutral-400"
+                                                        >
                                                             Date
                                                         </Typography>
-                                                        <Typography variant="small" className="text-neutral-600 dark:text-neutral-400"                                                    >
+                                                        <Typography
+                                                            variant="small"
+                                                            className="text-neutral-600 dark:text-neutral-400"
+                                                        >
                                                             {new Date(record.date).toLocaleDateString()}
                                                         </Typography>
                                                     </div>

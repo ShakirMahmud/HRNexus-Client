@@ -168,10 +168,10 @@ const DashboardLayout = () => {
                 {/* Logout Link */}
                 <ListItem
                     onClick={handleLogout}
-                    className="cursor-pointer px-4 hover:bg-red-50 dark:hover:bg-red-900/10"
+                    className="cursor-pointer px-4 hover:bg-red-50 dark:hover:bg-red-900/10 dark:text-red-300"
                 >
                     <ListItemPrefix>
-                        <PowerIcon className="h-5 w-5 text-red-500" />
+                        <PowerIcon className="h-5 w-5 text-red-500 dark:text-red-400" />
                     </ListItemPrefix>
                     Logout
                 </ListItem>
@@ -226,7 +226,7 @@ const DashboardLayout = () => {
                 </Drawer>
 
                 {/* Main Content Area */}
-                <div className="flex-1 bg-white dark:bg-dark-background md:p-6">
+                <div className="flex-1 bg-white dark:bg-dark-neutral-50 md:p-6">
                     <Outlet />
                 </div>
             </div>
