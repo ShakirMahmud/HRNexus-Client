@@ -11,6 +11,7 @@ const Test = () => {
     const {isHR, isHRLoading} = useHR();
     const {isEmployee, isEmployeeLoading} = useEmployee();
     const {user, loading} = useAuth();
+    // console.log(user, isAdmin, isHR, isEmployee);
 
     if(isAdminLoading || isHRLoading || isEmployeeLoading || loading){
         return <LoadingSpinner/>

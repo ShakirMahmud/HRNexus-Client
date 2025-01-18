@@ -1,15 +1,24 @@
+import React, { useState } from "react";
 import {
     Card,
     Input,
     Button,
     Typography,
     Select,
-    Option,
+    Option
 } from "@material-tailwind/react";
+import {
+    EyeIcon,
+    EyeOffIcon,
+    UserIcon,
+    MailIcon,
+    Banknote,
+    Lock,
+    LockIcon
+} from 'lucide-react';
 import { FcGoogle } from "react-icons/fc";
 import { Link, useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
-import { useState } from "react";
 import useAxiosPublic from "../../hooks/useAxiosPublic";
 import Swal from "sweetalert2";
 import RoleSelectionModal from "./RoleSelectionModal";
@@ -19,22 +28,55 @@ const Register = () => {
     const { createUser, setUser, updateUserProfile } = useAuth();
     const navigate = useNavigate();
     const axiosPublic = useAxiosPublic();
-    const [selectedRole, setSelectedRole] = useState('Employee');
 
-    const IMAGE_HOSTING_KEY = import.meta.env.VITE_IMAGE_HOSTING_KEY;
-    const IMAGE_HOSTING_API = `https://api.imgbb.com/1/upload?key=${IMAGE_HOSTING_KEY}`;
+    // State management
+    const [selectedRole, setSelectedRole] = useState('Employee');
+    const [showPassword, setShowPassword] = useState(false);
+    const [passwordErrors, setPasswordErrors] = useState({
+        length: false,
+        capital: false,
+        specialChar: false
+    });
+
+    const {
+        isRoleModalOpen,
+        setIsRoleModalOpen,
+        handleGoogleSignIn,
+        handleRoleConfirm,
+        role,
+        setRole,
+    } = useGoogleSignIn();
+
+    // Password validation
+    const validatePassword = (password) => {
+        const errors = {
+            length: password.length < 6,
+            capital: !/[A-Z]/.test(password),
+            specialChar: !/[!@#$%^&*(),.?":{}|<>]/.test(password)
+        };
+
+        setPasswordErrors(errors);
+        return !Object.values(errors).some(error => error);
+    };
 
     const handleSignUp = async (e) => {
         e.preventDefault();
+
         const form = e.target;
         const name = form.name.value;
-        const email = form.email.value;
+        const email = form.email.value.toLowerCase(); 
         const bank_account_no = form.bank_account_no.value;
         const password = form.password.value;
         const imageFile = form.image.files[0];
         const roleValue = selectedRole;
 
+        // Validate password before submission
+        if (!validatePassword(password)) {
+            return;
+        }
+
         try {
+            // Image handling
             let imageUrl = generateInitialAvatar(name);
             if (imageFile) {
                 const imageFormData = new FormData();
@@ -48,6 +90,7 @@ const Register = () => {
                     imageUrl = imageResponse.data.data.url;
                 }
             }
+
             const userCredential = await createUser(email, password)
             const user = userCredential.user;
             setUser(user);
@@ -55,6 +98,7 @@ const Register = () => {
                 displayName: name,
                 photoURL: imageUrl
             });
+
             const userData = {
                 name,
                 email,
@@ -65,13 +109,16 @@ const Register = () => {
                 designation: '',
                 isVerified: false
             };
-            const response = await axiosPublic.post('/users', userData);
+
+            await axiosPublic.post('/users', userData);
+
             Swal.fire({
                 icon: 'success',
                 title: 'Registration Successful!',
                 showConfirmButton: false,
                 timer: 1500
             });
+
             navigate('/');
         }
         catch (error) {
@@ -82,7 +129,7 @@ const Register = () => {
                 text: error.message || 'Something went wrong!'
             });
         }
-    }
+    };
 
     const generateInitialAvatar = (name) => {
         const initial = name.charAt(0).toUpperCase();
@@ -99,121 +146,216 @@ const Register = () => {
         return Math.floor(Math.random() * 16777215).toString(16);
     }
 
-    const {
-        isRoleModalOpen,
-        setIsRoleModalOpen,
-        handleGoogleSignIn,
-        handleRoleConfirm,
-        role,
-        setRole,
-    } = useGoogleSignIn();
-
     return (
-        <Card color="transparent" shadow={false} className="w-full min-h-screen flex justify-center items-center">
-            <Typography variant="h4" color="blue-gray">
-                Sign Up
-            </Typography>
-            <Typography color="gray" className="mt-1 font-normal">
-                Nice to meet you! Enter your details to register.
-            </Typography>
-            <form onSubmit={handleSignUp} className="mt-8 mb-2 w-80 max-w-screen-lg sm:w-96">
-                <div className="mb-1 flex flex-col gap-6">
-                    <Typography variant="h6" color="blue-gray" className="-mb-3">
-                        Your Name
-                    </Typography>
-                    <Input
-                        size="lg"
-                        name="name"
-                        placeholder="name"
-                        className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
-                        labelProps={{
-                            className: "before:content-none after:content-none",
-                        }}
-                    />
-                    <Typography variant="h6" color="blue-gray" className="-mb-3">
-                        Your Email
-                    </Typography>
-                    <Input
-                        size="lg"
-                        name="email"
-                        placeholder="name@mail.com"
-                        className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
-                        labelProps={{
-                            className: "before:content-none after:content-none",
-                        }}
-                    />
-                    <Typography variant="h6" color="blue-gray" className="-mb-3">
-                        Your Bank Account Number
-                    </Typography>
-                    <Input
-                        size="lg"
-                        name="bank_account_no"
-                        placeholder="123456789"
-                        className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
-                        labelProps={{
-                            className: "before:content-none after:content-none",
-                        }}
-                    />
-                    <Typography variant="h6" color="blue-gray" className="-mb-3">
-                        Password
-                    </Typography>
-                    <Input
-                        type="password"
-                        size="lg"
-                        name="password"
-                        placeholder="********"
-                        className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
-                        labelProps={{
-                            className: "before:content-none after:content-none",
-                        }}
-                    />
-                    {/* image upload  */}
-                    <Typography variant="h6" color="blue-gray" className="-mb-3">
-                        Upload Your Image
-                    </Typography>
-                    <Input
-                        type="file"
-                        accept="image/*"
-                        size="lg"
-                        name="image"
-                        className="!border-t-blue-gray-200 focus:!border-t-gray-900"
-                        labelProps={{
-                            className: "before:content-none after:content-none"
-                        }}
-                    />
-                    <div className="w-72">
+        <div className="min-h-screen bg-neutral-50 dark:bg-dark-background flex items-center justify-center px-4 py-8">
+            <Card
+                className="w-full max-w-5xl bg-white dark:bg-dark-surface shadow-elevated rounded-xl overflow-hidden grid grid-cols-1 md:grid-cols-2"
+            >
+                {/* Right Side - Registration Form */}
+                <div className="p-8 space-y-6">
+                    <div className="text-center">
+                        <Typography variant="h4" color="blue-gray" className="dark:text-white">
+                            Sign Up
+                        </Typography>
+                        <Typography color="gray" className="mt-2 dark:text-neutral-400">
+                            Create your account to get started
+                        </Typography>
+                    </div>
+
+                    <form onSubmit={handleSignUp} className="space-y-4">
+                        {/* Name Input */}
+                        <div className="relative">
+                            <UserIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 dark:text-neutral-100" />
+                            <Input
+                                size="lg"
+                                name="name"
+                                placeholder="Full Name"
+                                className="pl-10 !border-neutral-300 focus:!border-primary-500  dark:bg-dark-neutral-200 dark:text-white dark:caret-white"
+                                labelProps={{
+                                    className: "hidden" 
+                                }}
+                                required
+                            />
+                        </div>
+
+                        {/* Email Input */}
+                        <div className="relative">
+                            <MailIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 dark:text-neutral-300" />
+                            <Input
+                                size="lg"
+                                name="email"
+                                type="email"
+                                placeholder="Email Address"
+                                className="pl-10 !border-neutral-300 focus:!border-primary-500 dark:bg-dark-neutral-200 dark:text-white dark:caret-white"
+                                labelProps={{
+                                    className: "hidden" 
+                                }}
+                                required
+                            />
+                        </div>
+
+                        {/* Bank Account Input */}
+                        <div className="relative">
+                            <Banknote className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 dark:text-neutral-300" />
+                            <Input
+                                size="lg"
+                                name="bank_account_no"
+                                placeholder="Bank Account Number"
+                                className="pl-10 !border-neutral-300 focus:!border-primary-500 dark:bg-dark-neutral-200 dark:text-white dark:caret-white"
+                                labelProps={{
+                                    className: "hidden" 
+                                }}
+                                required
+                            />
+                        </div>
+
+                        {/* Password Input */}
+                        <div className="relative">
+                            <LockIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 dark:text-neutral-300" />
+                            <Input
+                                type={showPassword ? "text" : "password"}
+                                name="password"
+                                placeholder="Password"
+                                className="pr-12 pl-10 !border-neutral-300 focus:!border-primary-500 dark:bg-dark-neutral-200 dark:text-white caret-black dark:caret-white"
+                                labelProps={{
+                                    className: "hidden" 
+                                }}
+                                icon={
+                                    showPassword ? (
+                                        <EyeOffIcon
+                                            onClick={() => setShowPassword(false)}
+                                            className="cursor-pointer text-neutral-400 dark:text-neutral-300"
+                                        />
+                                    ) : (
+                                        <EyeIcon
+                                            onClick={() => setShowPassword(true)}
+                                            className="cursor-pointer text-neutral-400 dark:text-neutral-300"
+                                        />
+                                    )
+                                }
+                                required
+                                onChange={(e) => validatePassword(e.target.value)}
+                            />
+                        </div>
+
+                        {/* Password Validation Errors */}
+                        <div className="space-y-1 text-sm">
+                            {passwordErrors.length && (
+                                <Typography
+                                    variant="small"
+                                    color="red"
+                                    className="flex items-center gap-1"
+                                >
+                                    • Password must be at least 6 characters long
+                                </Typography>
+                            )}
+                            {passwordErrors.capital && (
+                                <Typography
+                                    variant="small"
+                                    color="red"
+                                    className="flex items-center gap-1"
+                                >
+                                    • Password must contain at least one capital letter
+                                </Typography>
+                            )}
+                            {passwordErrors.specialChar && (
+                                <Typography
+                                    variant="small"
+                                    color="red"
+                                    className="flex items-center gap-1"
+                                >
+                                    • Password must contain at least one special character
+                                </Typography>
+                            )}
+                        </div>
+
+                        {/* Image Upload */}
+                        <div className="relative">
+                            <Input
+                                type="file"
+                                name="image"
+                                accept="image/*"
+                                label="Upload Profile Picture"
+                                
+                                className="!border-neutral-300 border-t-0 focus:!border-primary-500 dark:bg-dark-neutral-200 dark:text-white text-base"
+                                labelProps={{
+                                    className: "text-sm dark:text-white  !border-neutral-300"
+                                }}
+                            />
+                        </div>
+
+                        {/* Role Selection */}
                         <Select
                             label="Select Your Role"
                             value={selectedRole}
                             onChange={(selectedValue) => {
                                 setSelectedRole(selectedValue);
                             }}
+                            className="!border-neutral-300 border-t-0 focus:!border-primary-500 dark:bg-dark-neutral-200 dark:text-white"
+                            labelProps={{
+                                className: "text-sm dark:text-white" // Larger label text
+                            }}
                         >
                             <Option value="Employee">Employee</Option>
                             <Option value="HR">HR</Option>
                         </Select>
+
+                        {/* Submit Button */}
+                        <Button
+                            type="submit"
+                            className="bg-primary-500 hover:bg-primary-600 dark:bg-dark-primary-500 dark:hover:bg-dark-primary-600"
+                            fullWidth
+                        >
+                            Sign Up
+                        </Button>
+
+                        {/* Login Link */}
+                        <Typography color="gray" className="mt-4 text-center dark:text-neutral-400">
+                            Already have an account?{" "}
+                            <Link
+                                to="/login"
+                                className="text-primary-500 hover:text-primary-600 dark:text-dark-primary-500 dark:hover:text-dark-primary-400"
+                            >
+                                Sign In
+                            </Link>
+                        </Typography>
+                    </form>
+
+                    {/* Divider */}
+                    <div className="my-4 flex items-center justify-center">
+                        <div className="border-t border-neutral-300 dark:border-dark-neutral-300 w-full"></div>
+                        <span className="px-4 text-neutral-500 dark:text-neutral-400">or</span>
+                        <div className="border-t border-neutral-300 dark:border-dark-neutral-300 w-full"></div>
                     </div>
+
+                    {/* Google Sign In */}
+                    <Button
+                        variant="outlined"
+                        onClick={handleGoogleSignIn}
+                        className="flex items-center justify-center gap-2 w-full border-primary-500 text-primary-500 hover:bg-primary-50 dark:border-dark-primary-500 dark:text-dark-primary-500 dark:hover:bg-dark-primary-900/10"
+                    >
+                        <FcGoogle size={24} />
+                        Continue with Google
+                    </Button>
                 </div>
 
-                <Button type="submit" className="mt-6" fullWidth>
-                    sign up
-                </Button>
-                <Typography color="gray" className="mt-4 text-center font-normal">
-                    Already have an account?{" "}
-                    <Link to="/login" className="font-medium text-gray-900">
-                        Sign In
-                    </Link>
-                </Typography>
-            </form>
-            <div className="w-full flex justify-center py-6">
-                <button
-                    onClick={handleGoogleSignIn}
-                    className="flex items-center gap-2 px-6 py-3 bg-white text-gray-600 rounded-lg shadow hover:shadow-md transition-all duration-300 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                >
-                    <FcGoogle size={24} />
-                    <span className="text-lg font-medium">Log In with Google</span>
-                </button>
-            </div>
+                {/* Left Side - Illustration */}
+                <div className="hidden md:flex flex-col justify-center items-center bg-primary-500 dark:bg-dark-primary-500 p-8 text-white">
+                    <Typography variant="h3" className="mb-4 text-center">
+                        Join Our Team
+                    </Typography>
+                    <Typography className="text-center mb-6">
+                        Create your account and start your journey with us
+                    </Typography>
+                    <img
+                        src="/register-illustration.svg"
+                        alt="Register Illustration"
+                        className="w-full max-w-xs"
+                    />
+                </div>
+            </Card>
+
+            {/* Role Selection Modal */}
             <RoleSelectionModal
                 isOpen={isRoleModalOpen}
                 onClose={() => setIsRoleModalOpen(false)}
@@ -221,7 +363,7 @@ const Register = () => {
                 role={role}
                 setRole={setRole}
             />
-        </Card>
+        </div>
     );
 };
 

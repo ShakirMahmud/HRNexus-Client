@@ -17,8 +17,12 @@ const Progress = () => {
     const filteredWorkSheet = useMemo(() => {
         return workSheet.filter(record => {
             const recordDate = new Date(record.date);
-            const monthMatches = selectedMonth ? recordDate.getMonth() + 1 === parseInt(selectedMonth) : true;
-            const employeeMatches = selectedEmployee ? record.email === selectedEmployee : true;
+            const monthMatches = selectedMonth 
+                ? recordDate.getMonth() + 1 === parseInt(selectedMonth) 
+                : true;
+            const employeeMatches = selectedEmployee 
+                ? record.email === selectedEmployee 
+                : true;
             return monthMatches && employeeMatches;
         });
     }, [workSheet, selectedEmployee, selectedMonth]);
@@ -35,7 +39,7 @@ const Progress = () => {
                     <Select
                         label="Select Employee"
                         value={selectedEmployee}
-                        onChange={(value) => setSelectedEmployee(value)}
+                        onChange={(value) => setSelectedEmployee(value || '')}
                     >
                         <Option value="">All Employees</Option>
                         {employeeNames.map((name) => (
@@ -48,11 +52,14 @@ const Progress = () => {
                     <Select
                         label="Select Month"
                         value={selectedMonth}
-                        onChange={(value) => setSelectedMonth(value)}
+                        onChange={(value) => setSelectedMonth(value || '')}
                     >
                         <Option value="">All Months</Option>
                         {[...Array(12)].map((_, index) => (
-                            <Option key={index + 1} value={index + 1}>
+                            <Option 
+                                key={index + 1} 
+                                value={`${index + 1}`}  // Convert to string
+                            >
                                 {new Date(0, index).toLocaleString('default', { month: 'long' })}
                             </Option>
                         ))}
@@ -60,7 +67,7 @@ const Progress = () => {
                 </div>
 
                 <Typography variant="h6">
-                    Total Hours: {totalHours}
+                    Total Hours: {totalHours.toFixed(2)}
                 </Typography>
             </Card>
 

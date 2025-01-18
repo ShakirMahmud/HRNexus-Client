@@ -7,11 +7,9 @@ html {
       background-color 0.3s ease, 
       color 0.3s ease;
   }
-  
-  /* Optional: Custom scrollbar for dark mode */
+
   @layer utilities {
     .dark {
       scrollbar-color: #4B5563 #1F2937;
-      scrollbar-width: thin;
     }
   }
