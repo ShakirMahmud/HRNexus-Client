@@ -1,8 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import useAxiosSecure from './useAxiosSecure';
+import useAuth from './useAuth';
 
 const useUsers = () => {
     const axiosSecure = useAxiosSecure();
+    const { user } = useAuth();
 
     const { 
         data: users = [], 
@@ -24,6 +26,14 @@ const useUsers = () => {
             };
         }
     });
+    const{ data: userByEmail, isLoading: userByEmailLoading, refetch: userByEmailRefetch } = useQuery({
+        queryKey: ['userByEmail'],
+        queryFn: async () => {
+            const res = await axiosSecure.get(`/users/${user?.email}`);
+            return res.data;
+        }
+    });
+        
 
     return { 
         users: users.all || [], 
@@ -31,7 +41,10 @@ const useUsers = () => {
         hrs: users.hrs || [],
         hrsAndEmployees: users.hrsAndEmployees || [],
         isUsersLoading,
-        refetch 
+        refetch,
+        userByEmail,
+        userByEmailLoading, 
+        userByEmailRefetch
     };
 };
 
