@@ -6,7 +6,7 @@ import {
     Typography, 
     Avatar 
 } from "@material-tailwind/react";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import { useQuery } from "@tanstack/react-query";
 
@@ -54,7 +54,7 @@ const EmployeeDetails = () => {
                         size="xl" 
                     />
                     <div>
-                        <Typography variant="h4">{employee.name}</Typography>
+                        <Typography variant="h4" className="font-semibold">{employee.name}</Typography>
                         <Typography variant="paragraph" color="blue-gray">
                             {employee.email}
                         </Typography>
@@ -66,12 +66,12 @@ const EmployeeDetails = () => {
 
                 {/* Payment History Chart */}
                 <div className="p-6">
-                    <Typography variant="h5" className="mb-4">
+                    <Typography variant="h5" className="mb-4 font-semibold">
                         Salary Payment History
                     </Typography>
                     
                     {isLoading ? (
-                        <div>Loading payment history...</div>
+                        <div className="text-center">Loading payment history...</div>
                     ) : chartData.length > 0 ? (
                         <ResponsiveContainer width="100%" height={300}>
                             <BarChart data={chartData}>
@@ -110,7 +110,7 @@ const EmployeeDetails = () => {
                             </BarChart>
                         </ResponsiveContainer>
                     ) : (
-                        <Typography color="gray">
+                        <Typography color="gray" className="text-center">
                             No payment history available
                         </Typography>
                     )}
