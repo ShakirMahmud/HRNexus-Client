@@ -17,6 +17,7 @@ import AdminRoute from './AdminRoute';
 import AllEmployeeList from "../pages/dashboardPages/adminPages/AllEmployeeList";
 import Payroll from "../pages/dashboardPages/adminPages/Payroll";
 import PaymentHistory from "../pages/dashboardPages/employeePages/PaymentHistory";
+import ContactUs from "../pages/contactPage/ContactUs";
 
 
 export const router = createBrowserRouter([
@@ -31,7 +32,7 @@ export const router = createBrowserRouter([
             },
             {
                 path: 'contact',
-                element: <h1>Contact</h1>
+                element: <ContactUs/>
             },
             {},
             {},
