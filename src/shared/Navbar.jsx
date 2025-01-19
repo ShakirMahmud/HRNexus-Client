@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
   Navbar,
@@ -10,27 +10,46 @@ import {
 import { User, LogOut } from "lucide-react";
 import DarkModeToggle from "../components/DarkModeToggle";
 import useAuth from "../hooks/useAuth";
+import useAdmin from "../hooks/useAdmin";
+import useHR from "../hooks/useHR";
+import useEmployee from "../hooks/useEmployee";
 
 const NavbarDefault = () => {
+  const { isAdmin, isAdminLoading } = useAdmin();
+  const { isHR, isHRLoading } = useHR();
+  const { isEmployee, isEmployeeLoading } = useEmployee();
   const [openNav, setOpenNav] = useState(false);
   const { user, logOut } = useAuth();
   const navigate = useNavigate();
 
-  React.useEffect(() => {
+  useEffect(() => {
     window.addEventListener(
       "resize",
       () => window.innerWidth >= 960 && setOpenNav(false)
     );
+    return () => window.removeEventListener("resize", () => {});
   }, []);
 
-  // Navigation Links with active state styling
+  // Dynamic navigation links
+  const navLinks = [
+    { name: "Home", path: "/" },
+    { name: "Contact", path: "/contact" },
+  ];
+
+  if (!isAdminLoading && isAdmin) {
+    navLinks.push({ name: "Admin Dashboard", path: "/dashboard/admin" });
+  }
+  if (!isHRLoading && isHR) {
+    navLinks.push({ name: "HR Dashboard", path: "/dashboard/hr" });
+  }
+  if (!isEmployeeLoading && isEmployee) {
+    navLinks.push({ name: "Employee Dashboard", path: "/dashboard/employee" });
+  }
+
+  // Navigation List with active state styling
   const navList = (
     <ul className="mt-2 mb-4 flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
-      {[
-        { name: 'Home', path: '/' },
-        { name: 'Dashboard', path: '/dashboard' },
-        { name: 'Contact', path: '/contact' }
-      ].map((item) => (
+      {navLinks.map((item) => (
         <Typography
           key={item.path}
           as="li"

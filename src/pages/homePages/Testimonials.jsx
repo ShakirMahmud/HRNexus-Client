@@ -4,6 +4,10 @@ import { Autoplay, Pagination } from 'swiper/modules';
 import { Typography, Button } from '@material-tailwind/react';
 import 'swiper/css';
 import 'swiper/css/pagination';
+import img1 from '../../assets/10008828.jpg'
+import img2 from '../../assets/8660809.jpg'
+import img3 from '../../assets/9866636.jpg'
+import img4 from '../../assets/woman-green-jacket-hat-with-word-hero-front.jpg'
 
 const Testimonials = () => {
     const testimonials = [
@@ -11,25 +15,25 @@ const Testimonials = () => {
             name: "John Doe",
             position: "CEO, Company A",
             text: "This company has transformed our HR processes. Their solutions are innovative and effective!",
-            image: "/path/to/image1.jpg"
+            image: img1
         },
         {
             name: "Jane Smith",
             position: "HR Manager, Company B",
             text: "The team is incredibly supportive and knowledgeable. I highly recommend their services!",
-            image: "/path/to/image2.jpg"
+            image: img2
         },
         {
             name: "Michael Johnson",
             position: "CTO, Company C",
             text: "Their data-driven approach has helped us make informed decisions that improved our workforce management.",
-            image: "/path/to/image3.jpg"
+            image: img3
         },
         {
             name: "Emily Davis",
             position: "Operations Director, Company D",
             text: "A fantastic partner in our HR journey. Their tools are user-friendly and efficient.",
-            image: "/path/to/image4.jpg"
+            image: img4
         }
     ];
 

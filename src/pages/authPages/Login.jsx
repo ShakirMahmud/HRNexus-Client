@@ -15,7 +15,7 @@ import {
   LockIcon,
   MailIcon
 } from 'lucide-react';
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import Swal from "sweetalert2";
 import useGoogleSignIn from "../../hooks/useGoogleSignIn";
@@ -27,6 +27,7 @@ const Login = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const { userLogin, setUser, logOut } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const axiosSecure = useAxiosSecure();
 
   // State for form errors
@@ -71,7 +72,14 @@ const Login = () => {
 
       // If not fired, allow login
       setUser(user);
-      navigate('/');
+      Swal.fire({
+        icon: "success",
+        title: "Login Successful",
+        text: "You have successfully logged in.",
+        confirmButtonText: "OK"
+      }).then(() => {
+        navigate(location?.state ? location?.state : '/');
+      })
     } catch (err) {
       console.error(err);
 

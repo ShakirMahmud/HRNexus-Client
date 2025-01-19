@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import Swal from "sweetalert2";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import useAuth from "./useAuth";
 import useAxiosPublic from "./useAxiosPublic";
 import useAxiosSecure from "./useAxiosSecure";
@@ -10,7 +10,7 @@ const useGoogleSignIn = () => {
   const axiosPublic = useAxiosPublic();
   const axiosSecure = useAxiosSecure();
   const navigate = useNavigate();
-
+  const location = useLocation();
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
   const [pendingUser, setPendingUser] = useState(null);
   const [role, setRole] = useState("");
@@ -70,7 +70,7 @@ const useGoogleSignIn = () => {
       await axiosPublic.post("/users", userData);
       setUser(pendingUser);
       setIsRoleModalOpen(false);
-      navigate("/");
+      navigate(location?.state ? location?.state : '/');
     } catch (error) {
       console.error("Error adding user:", error);
       Swal.fire({

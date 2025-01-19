@@ -13,7 +13,7 @@ import {
     InboxIcon,
     PowerIcon,
 } from "@heroicons/react/24/solid";
-import { Menu, X } from 'lucide-react';
+import { BarChartIcon, ClipboardListIcon, DollarSignIcon, FileSpreadsheetIcon, Menu, ReceiptIcon, UsersIcon, WalletIcon, X } from 'lucide-react';
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import useAdmin from "../hooks/useAdmin";
@@ -75,22 +75,23 @@ const DashboardLayout = () => {
 
             <List className="space-y-1">
                 {/* Dashboard Navigation Links */}
-                <NavLink end to="/dashboard" className={NavLinkStyle}>
-                    <ListItemPrefix>
-                        <HomeIcon className="h-5 w-5" />
-                    </ListItemPrefix>
-                    Dashboard Home
-                </NavLink>
+
 
                 {/* Admin Links */}
                 {isAdmin && (
                     <>
+                        <NavLink end to="/dashboard/admin" className={NavLinkStyle}>
+                            <ListItemPrefix>
+                                <HomeIcon className="h-5 w-5" />
+                            </ListItemPrefix>
+                            Admin Home
+                        </NavLink>
                         <NavLink
                             to="/dashboard/all-employee-list"
                             className={NavLinkStyle}
                         >
                             <ListItemPrefix>
-                                <InboxIcon className="h-5 w-5" />
+                                <UsersIcon className="h-5 w-5" />
                             </ListItemPrefix>
                             All Employee List
                         </NavLink>
@@ -99,7 +100,7 @@ const DashboardLayout = () => {
                             className={NavLinkStyle}
                         >
                             <ListItemPrefix>
-                                <InboxIcon className="h-5 w-5" />
+                                <DollarSignIcon className="h-5 w-5" />
                             </ListItemPrefix>
                             Payroll
                         </NavLink>
@@ -109,12 +110,18 @@ const DashboardLayout = () => {
                 {/* HR Links */}
                 {isHR && (
                     <>
+                        <NavLink end to="/dashboard/hr" className={NavLinkStyle}>
+                            <ListItemPrefix>
+                                <HomeIcon className="h-5 w-5" />
+                            </ListItemPrefix>
+                            HR Home
+                        </NavLink>
                         <NavLink
                             to="/dashboard/employee-list"
                             className={NavLinkStyle}
                         >
                             <ListItemPrefix>
-                                <InboxIcon className="h-5 w-5" />
+                                <ClipboardListIcon className="h-5 w-5" />
                             </ListItemPrefix>
                             Employee List
                         </NavLink>
@@ -123,7 +130,7 @@ const DashboardLayout = () => {
                             className={NavLinkStyle}
                         >
                             <ListItemPrefix>
-                                <InboxIcon className="h-5 w-5" />
+                                <BarChartIcon className="h-5 w-5" />
                             </ListItemPrefix>
                             Progress
                         </NavLink>
@@ -132,7 +139,7 @@ const DashboardLayout = () => {
                             className={NavLinkStyle}
                         >
                             <ListItemPrefix>
-                                <InboxIcon className="h-5 w-5" />
+                                <WalletIcon className="h-5 w-5" />
                             </ListItemPrefix>
                             Payment History
                         </NavLink>
@@ -142,13 +149,19 @@ const DashboardLayout = () => {
                 {/* Employee Links */}
                 {isEmployee && (
                     <>
+                        <NavLink end to="/dashboard/employee" className={NavLinkStyle}>
+                            <ListItemPrefix>
+                                <HomeIcon className="h-5 w-5" />
+                            </ListItemPrefix>
+                            Employee Home
+                        </NavLink>
                         <NavLink
                             to="/dashboard/work-sheet"
                             className={NavLinkStyle}
                             onClick={closeDrawer}
                         >
                             <ListItemPrefix>
-                                <InboxIcon className="h-5 w-5" />
+                                <FileSpreadsheetIcon className="h-5 w-5" />
                             </ListItemPrefix>
                             My Work-Sheet
                         </NavLink>
@@ -158,7 +171,7 @@ const DashboardLayout = () => {
                             onClick={closeDrawer}
                         >
                             <ListItemPrefix>
-                                <InboxIcon className="h-5 w-5" />
+                                <ReceiptIcon className="h-5 w-5" />
                             </ListItemPrefix>
                             Payment History
                         </NavLink>

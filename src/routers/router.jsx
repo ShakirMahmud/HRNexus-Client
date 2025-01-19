@@ -18,6 +18,11 @@ import AllEmployeeList from "../pages/dashboardPages/adminPages/AllEmployeeList"
 import Payroll from "../pages/dashboardPages/adminPages/Payroll";
 import PaymentHistory from "../pages/dashboardPages/employeePages/PaymentHistory";
 import ContactUs from "../pages/contactPage/ContactUs";
+import AdminStats from "../pages/dashboardPages/adminPages/AdminStats";
+import HRStats from "../pages/dashboardPages/hrPages/HRStats";
+import EmployeeStats from "../pages/dashboardPages/employeePages/EmployeeStats";
+import AdminStatsDashboard from "../pages/dashboardPages/adminPages/AdminStatsDashboard";
+import HRStatsDashboard from "../pages/dashboardPages/hrPages/HRStatsDashboard";
 
 
 export const router = createBrowserRouter([
@@ -52,6 +57,10 @@ export const router = createBrowserRouter([
         children:[
             // employee routes 
             {
+                path: 'employee',
+                element: <EmployeeRoute><EmployeeStats/></EmployeeRoute>
+            },
+            {
                 path: 'work-sheet',
                 element: <EmployeeRoute><WorkSheet/></EmployeeRoute>
             },
@@ -61,8 +70,11 @@ export const router = createBrowserRouter([
             },
             {},
             {},
-            {},
             // hr routes
+            {
+                path: 'hr',
+                element: <HRRoute><HRStatsDashboard/></HRRoute>
+            },
             {
                 path: 'employee-list',
                 element: <HRRoute><EmployeeList/></HRRoute>
@@ -79,8 +91,11 @@ export const router = createBrowserRouter([
                 path: 'payment_history',
                 element: <HRRoute><PaymentHistory/></HRRoute>
             },
-            {},
             // admin routes
+            {
+                path: 'admin',
+                element: <AdminRoute><AdminStatsDashboard/></AdminRoute>
+            },
             {
                 path: 'all-employee-list',
                 element: <AdminRoute><AllEmployeeList/></AdminRoute>
@@ -89,7 +104,6 @@ export const router = createBrowserRouter([
                 path: 'payroll',
                 element: <AdminRoute><Payroll/></AdminRoute>
             },
-            {},
             {},
             {},
         ]

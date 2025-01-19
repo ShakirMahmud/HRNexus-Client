@@ -2,6 +2,9 @@ import React from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination, Navigation } from 'swiper/modules';
 import { Typography, Button } from '@material-tailwind/react';
+import img1 from '../../assets/front-view-group-young-freelancers-office-have-conversation-smiling-min.jpg'
+import img2 from '../../assets/modern-equipped-computer-lab-min.jpg'
+import img3 from '../../assets/people-taking-part-business-event-min.jpg'
 
 // Import Swiper styles
 import 'swiper/css';
@@ -11,21 +14,21 @@ import 'swiper/css/navigation';
 const Banner = () => {
     const slides = [
         {
-            image: '/path/to/image1.jpg',
+            image: img1,
             title: 'Empowering Workforce Excellence',
             description: 'Transforming workplace productivity through innovative HR solutions',
             buttonText: 'Explore Our Services',
             link: '/services'
         },
         {
-            image: '/path/to/image2.jpg',
+            image: img2,
             title: 'Streamline Your Human Resources',
             description: 'Efficient management, seamless operations, and employee growth',
             buttonText: 'Learn More',
             link: '/about'
         },
         {
-            image: '/path/to/image3.jpg',
+            image: img3,
             title: 'Data-Driven HR Management',
             description: 'Leverage analytics to make informed decisions and boost performance',
             buttonText: 'View Insights',
@@ -43,7 +46,7 @@ const Banner = () => {
                     disableOnInteraction: false,
                 }}
                 loop={true}
-                infinity ={true}
+                
                 pagination={{
                     clickable: true,
                 }}
