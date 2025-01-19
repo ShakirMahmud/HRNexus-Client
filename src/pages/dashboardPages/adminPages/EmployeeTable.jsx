@@ -14,7 +14,6 @@ import {
 } from 'lucide-react';
 import SalaryAdjustmentModal from './SalaryAdjustmentModal';
 import useAxiosSecure from '../../../hooks/useAxiosSecure';
-import Swal from 'sweetalert2';
 
 const EmployeeTable = ({ employees, onFireEmployee, refetch, handleMakeHR }) => {
     const [selectedEmployee, setSelectedEmployee] = useState(null);
@@ -26,139 +25,283 @@ const EmployeeTable = ({ employees, onFireEmployee, refetch, handleMakeHR }) => 
         setIsSalaryModalOpen(true);
     };
 
-    
-    
-
     return (
-        <Card className="w-full overflow-x-auto shadow-lg">
-            <table className="w-full min-w-max table-auto text-left">
-                <thead>
-                    <tr className="bg-blue-gray-50">
-                        <th className="p-4 border-b border-blue-gray-100">
-                            <Typography variant="small" color="blue-gray" className="font-bold flex items-center">
-                                <UserIcon className="mr-2 h-4 w-4" /> Name
-                            </Typography>
-                        </th>
-                        <th className="p-4 border-b border-blue-gray-100">
-                            <Typography variant="small" color="blue-gray" className="font-bold flex items-center">
-                                <BadgeCheckIcon className="mr-2 h-4 w-4" /> Designation
-                            </Typography>
-                        </th>
-                        <th className="p-4 border-b border-blue-gray-100">
-                            <Typography variant="small" color="blue-gray" className="font-bold flex items-center">
-                                <DollarSignIcon className="mr-2 h-4 w-4" /> Salary
-                            </Typography>
-                        </th>
-                        <th className="p-4 border-b border-blue-gray-100 text-center">
-                            <Typography variant="small" color="blue-gray" className="font-bold">
-                                Actions
-                            </Typography>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {employees.map((employee) => {
-                        const isHR = employee.roleValue === 'HR';
-                        const isFired = employee.isFired;
-                        const salaryDisplay = isHR
-                            ? `$${(employee.salaryPerHour).toFixed(2)} /month`
-                            : `$${employee.salaryPerHour.toFixed(2)} /hour`;
+        <Card className="w-full overflow-x-auto bg-white dark:bg-dark-surface shadow-lg">
+            {/* Desktop View */}
+            <div className="hidden md:block">
+                <table className="w-full min-w-max table-auto text-left">
+                    <thead>
+                        <tr className="bg-neutral-50 dark:bg-dark-neutral-200">
+                            <th className="p-4 border-b border-neutral-200 dark:border-dark-neutral-300 w-1/4">
+                                <Typography
+                                    variant="small"
+                                    className="font-bold flex items-center text-neutral-700 dark:text-neutral-300"
+                                >
+                                    <UserIcon className="mr-2 h-4 w-4" /> Name
+                                </Typography>
+                            </th>
+                            <th className="p-4 border-b border-neutral-200 dark:border-dark-neutral-300 w-1/4">
+                                <Typography
+                                    variant="small"
+                                    className="font-bold flex items-center text-neutral-700 dark:text-neutral-300"
+                                >
+                                    <BadgeCheckIcon className="mr-2 h-4 w-4" /> Designation
+                                </Typography>
+                            </th>
+                            <th className="p-4 border-b border-neutral-200 dark:border-dark-neutral-300 ">
+                                <Typography
+                                    variant="small"
+                                    className="font-bold flex items-center text-neutral-700 dark:text-neutral-300"
+                                >
+                                    <DollarSignIcon className="mr-2 h-4 w-4" /> Salary to Pay
+                                </Typography>
+                            </th>
+                            <th className="p-4 border-b border-neutral-200 dark:border-dark-neutral-300 text-right ">
+                                <Typography
+                                    variant="small"
+                                    className="font-bold text-neutral-700 dark:text-neutral-300 " 
+                                >
+                                    Actions
+                                </Typography>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {employees.map((employee) => {
+                            const isHR = employee.roleValue === 'HR';
+                            const isFired = employee.isFired;
+                            const salaryDisplay = isHR
+                                ? `$${(employee.salaryPerHour).toFixed(2)} /month`
+                                : `$${employee.salaryPerHour.toFixed(2)} /hour`;
 
-                        return (
-                            <tr
-                                key={employee._id}
-                                className={`hover:bg-blue-gray-50 transition-colors ${isFired ? 'opacity-50 bg-red-50' : ''}`}
-                            >
-                                <td className="p-4 border-b border-blue-gray-50">
-                                    <div className="flex items-center gap-3">
-                                        <div className="relative">
-                                            <img
-                                                src={employee.image}
-                                                alt={employee.name}
-                                                className="h-10 w-10 rounded-full object-cover"
-                                            />
-                                            {isFired && (
-                                                <div className="absolute bottom-0 right-0 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center">
-                                                    <BanIcon className="h-3 w-3" />
-                                                </div>
-                                            )}
-                                        </div>
-                                        <Typography 
-                                            variant="small" 
-                                            color={isFired ? "red" : "blue-gray"}
-                                            className={isFired ? "line-through" : ""}
-                                        >
-                                            {employee.name}
-                                        </Typography>
-                                    </div>
-                                </td>
-                                <td className="p-4 border-b border-blue-gray-50">
-                                    <Typography
-                                        variant="small"
-                                        color={isFired ? "red" : (isHR ? "green" : "blue-gray")}
-                                        className="font-medium"
-                                    >
-                                        {employee.roleValue}
-                                        {isFired && " (Fired)"}
-                                    </Typography>
-                                </td>
-                                <td className="p-4 border-b border-blue-gray-50">
-                                    <Typography 
-                                        variant="small" 
-                                        color={isFired ? "red" : "blue-gray"}
-                                        className={isFired ? "line-through" : ""}
-                                    >
-                                        {salaryDisplay}
-                                    </Typography>
-                                </td>
-                                <td className="p-4 border-b border-blue-gray-50 text-center">
-                                    <div className="flex justify-center space-x-2">
-                                        {!isHR && !isFired && (
-                                            <Button
-                                                size="sm"
-                                                color="blue"
-                                                variant="outlined"
-                                                onClick={() => {handleMakeHR(employee)}}
+                            return (
+                                <tr
+                                    key={employee._id}
+                                    className={`hover:bg-neutral-50 dark:hover:bg-dark-neutral-300 transition-colors ${isFired ? 'opacity-50 bg-red-50 dark:bg-red-900/20' : ''}`}
+                                >
+                                    <td className="p-4 border-b border-neutral-200 dark:border-dark-neutral-300">
+                                        <div className="flex items-center gap-3">
+                                            <div className="relative">
+                                                <img
+                                                    src={employee.image}
+                                                    alt={employee.name}
+                                                    className="h-10 w-10 rounded-full object-cover"
+                                                />
+                                                {isFired && (
+                                                    <div className="absolute bottom-0 right-0 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center">
+                                                        <BanIcon className="h-3 w-3" />
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <Typography
+                                                variant="small"
+                                                className={`font-normal ${isFired
+                                                        ? "text-neutral-400 dark:text-neutral-600 line-through"
+                                                        : "text-neutral-800 dark:text-neutral-100"
+                                                    }`}
                                             >
-                                                Make HR
-                                            </Button>
-                                        )}
-                                        {isFired ? (
-                                            <Tooltip content="Employee has been fired">
+                                                {employee.name}
+                                            </Typography>
+                                        </div>
+                                    </td>
+                                    <td className="p-4 border-b border-neutral-200 dark:border-dark-neutral-300">
+                                        <Typography
+                                            variant="small"
+                                            className={`font-medium ${isFired
+                                                    ? "text-danger-500 dark:text-danger-400"
+                                                    : (isHR
+                                                        ? "text-success-600 dark:text-success-400"
+                                                        : "text-neutral-800 dark:text-neutral-100")
+                                                }`}
+                                        >
+                                            {employee.roleValue}
+                                            {isFired && " (Fired)"}
+                                        </Typography>
+                                    </td>
+                                    <td className="p-4 border-b border-neutral-200 dark:border-dark-neutral-300">
+                                        <Typography
+                                            variant="small"
+                                            className={`${isFired
+                                                    ? "text-neutral-400 dark:text-neutral-600 line-through"
+                                                    : "text-neutral-800 dark:text-neutral-100"
+                                                }`}
+                                        >
+                                            {salaryDisplay}
+                                        </Typography>
+                                    </td>
+                                    <td className="p-4 border-b border-neutral-200 dark:border-dark-neutral-300 ">
+                                        <div className="flex justify-end space-x-2 ">
+                                            {!isHR && !isFired && (
+                                                <Button
+                                                    size="sm"
+                                                    color="blue"
+                                                    variant="outlined"
+                                                    className="mr-2 dark:text-primary-300 dark:border-primary-300 dark:hover:bg-primary-900/20"
+                                                    onClick={() => handleMakeHR(employee)}
+                                                >
+                                                    Make HR
+                                                </Button>
+                                            )}
+                                            {isFired ? (
+                                                <Tooltip
+                                                    content="Employee has been fired"
+                                                    className="dark:bg-dark-neutral-800"
+                                                >
+                                                    <Button
+                                                        size="sm"
+                                                        color="red"
+                                                        variant="text"
+                                                        disabled
+                                                        className="mr-2 dark:text-danger-400 dark:opacity-50"
+                                                    >
+                                                        <BanIcon className="h-4 w-4 mr-1" /> Fired
+                                                    </Button>
+                                                </Tooltip>
+                                            ) : (
                                                 <Button
                                                     size="sm"
                                                     color="red"
-                                                    variant="text"
-                                                    disabled
+                                                    variant="outlined"
+                                                    className="mr-2 dark:text-danger-400 dark:border-danger-400 dark:hover:bg-danger-900/20"
+                                                    onClick={() => onFireEmployee(employee)}
                                                 >
-                                                    <BanIcon className="h-4 w-4 mr-1" /> Fired
+                                                    <TrashIcon className="h-4 w-4 mr-1" /> Fire
                                                 </Button>
-                                            </Tooltip>
-                                        ) : (
+                                            )}
                                             <Button
                                                 size="sm"
-                                                color="red"
-                                                variant="outlined"
-                                                onClick={() => onFireEmployee(employee)}
+                                                color="green"
+                                                className="dark:bg-success-600 dark:hover:bg-success-500"
+                                                onClick={() => handleOpenSalaryModal(employee)}
+                                                disabled={isFired}
                                             >
-                                                <TrashIcon className="h-4 w-4 mr-1" /> Fire
+                                                Adjust Salary
                                             </Button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            );
+                        })}
+                    </tbody>
+                </table>
+            </div>
+
+            {/* Mobile View */}
+            <div className="md:hidden">
+                {employees.map((employee) => {
+                    const isHR = employee.roleValue === 'HR';
+                    const isFired = employee.isFired;
+                    const salaryDisplay = isHR
+                        ? `$${(employee.salaryPerHour).toFixed(2)} /month`
+                        : `$${employee.salaryPerHour.toFixed(2)} /hour`;
+
+                    return (
+                        <Card
+                            key={employee._id}
+                            className={`mb-4 p-4 ${isFired
+                                    ? 'bg-red-50 dark:bg-red-900/20 opacity-50'
+                                    : 'bg-white dark:bg-dark-neutral-200'
+                                }`}
+                        >
+                            <div className="flex justify-between items-center mb-3">
+                                <div className="flex items-center gap-3">
+                                    <div className="relative">
+                                        <img
+                                            src={employee.image}
+                                            alt={employee.name}
+                                            className="h-10 w-10 rounded-full object-cover"
+                                        />
+                                        {isFired && (
+                                            <div className="absolute bottom-0 right-0 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center">
+                                                <BanIcon className="h-3 w-3" />
+                                            </div>
                                         )}
-                                        <Button
-                                            size="sm"
-                                            color="green"
-                                            onClick={() => handleOpenSalaryModal(employee)}
-                                            disabled={isFired}
-                                        >
-                                            Adjust Salary
-                                        </Button>
                                     </div>
-                                </td>
-                            </tr>
-                        );
-                    })}
-                </tbody>
-            </table>
+                                    <div>
+                                        <Typography
+                                            variant="small"
+                                            className={`font-medium ${isFired
+                                                    ? "text-neutral-400 dark:text-neutral-600 line-through"
+                                                    : "text-neutral-800 dark:text-neutral-100"
+                                                }`}
+                                        >
+                                            {employee.name}
+                                        </Typography>
+                                        <Typography
+                                            variant="small"
+                                            className={`${isFired
+                                                    ? "text-danger-500 dark:text-danger-400"
+                                                    : (isHR
+                                                        ? "text-success-600 dark:text-success-400"
+                                                        : "text-neutral-600 dark:text-neutral-300")
+                                                }`}
+                                        >
+                                            {employee.roleValue}
+                                            {isFired && " (Fired)"}
+                                        </Typography>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="flex justify-between items-center mb-3">
+                                <Typography
+                                    variant="small"
+                                    className={`font-medium ${isFired
+                                            ? "text-neutral-400 dark:text-neutral-600 line-through"
+                                            : "text-neutral-800 dark:text-neutral-100"
+                                        }`}
+                                >
+                                    Salary: {salaryDisplay}
+                                </Typography>
+                            </div>
+
+                            <div className="flex flex-wrap justify-end gap-2">
+                                {!isHR && !isFired && (
+                                    <Button
+                                        size="sm"
+                                        color="blue"
+                                        variant="outlined"
+                                        className="mr-2 dark:text-primary-300 dark:border-primary-300 dark:hover:bg-primary-900/20"
+                                        onClick={() => handleMakeHR(employee)}
+                                    >
+                                        Make HR
+                                    </Button>
+                                )}
+                                {isFired ? (
+                                    <Button
+                                        size="sm"
+                                        color="red"
+                                        variant="text"
+                                        disabled
+                                        className="mr-2 dark:text-danger-400 dark:opacity-50"
+                                    >
+                                        <BanIcon className="h-4 w-4 mr-1" /> Fired
+                                    </Button>
+                                ) : (
+                                    <Button
+                                        size="sm"
+                                        color="red"
+                                        variant="outlined"
+                                        className="mr-2 dark:text-danger-400 dark:border-danger-400 dark:hover:bg-danger-900/20"
+                                        onClick={() => onFireEmployee(employee)}
+                                    >
+                                        <TrashIcon className="h-4 w-4 mr-1" /> Fire
+                                    </Button>
+                                )}
+                                <Button
+                                    size="sm"
+                                    color="green"
+                                    className="dark:bg-success-600 dark:hover:bg-success-500"
+                                    onClick={() => handleOpenSalaryModal(employee)}
+                                    disabled={isFired}
+                                >
+                                    Adjust Salary
+                                </Button>
+                            </div>
+                        </Card>
+                    );
+                })}
+            </div>
 
             <SalaryAdjustmentModal
                 isOpen={isSalaryModalOpen}
