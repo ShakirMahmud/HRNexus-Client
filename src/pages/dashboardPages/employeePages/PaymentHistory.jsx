@@ -69,14 +69,19 @@ const PaymentHistory = () => {
         if (paymentLoading) {
             return (
                 <div className="text-center py-4">
-                    <Typography>Loading payment history...</Typography>
+                    <Typography className="text-neutral-700 dark:text-neutral-300">
+                        Loading payment history...
+                    </Typography>
                 </div>
             );
         }
-
+    
         if (!payments || payments.length === 0) {
             return (
-                <Alert color="blue" className="text-center">
+                <Alert 
+                    color="blue" 
+                    className="text-center bg-blue-50 dark:bg-dark-primary-900/20 text-blue-800 dark:text-dark-primary-300"
+                >
                     No payment history available.
                 </Alert>
             );
@@ -102,15 +107,16 @@ const PaymentHistory = () => {
                 ...monthPayments.map((payment) => (
                     <Card
                         key={payment._id}
-                        className="mb-4 p-4 border border-neutral-200 dark:border-dark-neutral-300"
+                        className="mb-4 p-4 border border-neutral-200 dark:border-dark-neutral-300 dark:bg-dark-neutral-100"
                     >
                         <div className="flex justify-between items-center mb-2">
-                            <Typography variant="small" className="font-bold">
+                            <Typography variant="small" className="font-bold dark:text-dark-primary-900">
                                 {getMonthName(payment.month)} {payment.year}
                             </Typography>
                             <Chip
                                 variant="ghost"
                                 size="sm"
+                                className='dark:text-dark-primary-900'
                                 value={payment.status}
                                 icon={
                                     payment.status === 'pending'
@@ -146,7 +152,7 @@ const PaymentHistory = () => {
                                 </Typography>
                                 <Typography
                                     variant="small"
-                                    className="break-words w-full max-w-full line-clamp-2 overflow-hidden text-ellipsis"
+                                    className="break-words w-full max-w-full line-clamp-2 overflow-hidden text-ellipsis dark:text-dark-primary-900"
                                 >
                                     {payment.transactionId}
                                 </Typography>
@@ -157,7 +163,7 @@ const PaymentHistory = () => {
                                 <Typography variant="small" className="text-neutral-600 dark:text-neutral-300 font-medium">
                                     Paid Date:
                                 </Typography>
-                                <Typography variant="small">
+                                <Typography variant="small" className='dark:text-dark-primary-900'>
                                     {payment.paymentDate
                                         ? new Date(payment.paymentDate).toLocaleDateString()
                                         : 'N/A'}
@@ -176,17 +182,22 @@ const PaymentHistory = () => {
             return (
                 <tr>
                     <td colSpan="5" className="text-center py-4">
-                        <Typography>Loading payment history...</Typography>
+                        <Typography className="text-neutral-700 dark:text-neutral-300">
+                            Loading payment history...
+                        </Typography>
                     </td>
                 </tr>
             );
         }
-
+    
         if (!payments || payments.length === 0) {
             return (
                 <tr>
                     <td colSpan="5">
-                        <Alert color="blue" className="text-center">
+                        <Alert 
+                            color="blue" 
+                            className="text-center bg-blue-50 dark:bg-dark-primary-900/20 text-blue-800 dark:text-dark-primary-300"
+                        >
                             No payment history available.
                         </Alert>
                     </td>
@@ -210,7 +221,7 @@ const PaymentHistory = () => {
                     </tr>
                     {monthPayments.map((payment) => (
                         <tr key={payment._id} className="hover:bg-neutral-50 dark:hover:bg-dark-background/50">
-                            <td className="p-4 border-b border-neutral-200 dark:border-dark-neutral-300">
+                            <td className="p-4 border-b border-neutral-200 dark:border-dark-neutral-300 dark:text-dark-primary-900">
                                 <Typography variant="small">
                                     {getMonthName(payment.month)} {payment.year}
                                 </Typography>
@@ -225,7 +236,7 @@ const PaymentHistory = () => {
                                     {payment.amount}
                                 </Typography>
                             </td>
-                            <td className="p-4 border-b border-neutral-200 dark:border-dark-neutral-300">
+                            <td className="p-4 border-b border-neutral-200 dark:border-dark-neutral-300 dark:text-dark-primary-900">
                                 <Typography
                                     variant="small"
                                     className="break-words w-full max-w-[150px] line-clamp-2 overflow-hidden text-ellipsis"
@@ -233,15 +244,16 @@ const PaymentHistory = () => {
                                     {payment.transactionId}
                                 </Typography>
                             </td>
-                            <td className="p-4 border-b border-neutral-200 dark:border-dark-neutral-300">
+                            <td className="p-4 border-b border-neutral-200 dark:border-dark-neutral-300 dark:text-dark-primary-900">
                                 <Chip
                                     variant="ghost"
                                     size="sm"
+                                    className='dark:text-dark-primary-900'
                                     value={payment.status}
                                     icon={
                                         payment.status === 'pending'
-                                            ? <ClockIcon className="h-4 w-4" />
-                                            : <CheckCircleIcon className="h-4 w-4" />
+                                            ? <ClockIcon className="h-4 w-4 dark:text-dark-primary-900" />
+                                            : <CheckCircleIcon className="h-4 w-4 dark:text-dark-primary-900" />
                                     }
                                     color={
                                         payment.status === 'pending' ? 'yellow' :
@@ -249,7 +261,7 @@ const PaymentHistory = () => {
                                     }
                                 />
                             </td>
-                            <td className="p-4 border-b border-neutral-200 dark:border-dark-neutral-300">
+                            <td className="p-4 border-b border-neutral-200 dark:border-dark-neutral-300 dark:text-dark-primary-900">
                                 <Typography variant="small">
                                     {payment.paymentDate
                                         ? new Date(payment.paymentDate).toLocaleDateString()
@@ -297,12 +309,12 @@ const PaymentHistory = () => {
     };
 
     return (
-        <Card className="w-full">
+        <Card className="w-full bg-white dark:bg-dark-surface shadow-sm dark:shadow-dark-elevated">
             {/* Desktop Table View */}
             <div className="hidden md:block overflow-x-auto">
                 <table className="w-full min-w-max table-auto text-left">
                     <thead>
-                        <tr>
+                        <tr className="bg-neutral-50 dark:bg-dark-neutral-200">
                             {['Period', 'Amount', 'Transaction ID', 'Status', 'Paid Date'].map((head) => (
                                 <th
                                     key={head}
@@ -323,17 +335,19 @@ const PaymentHistory = () => {
                     </tbody>
                 </table>
             </div>
-
+    
             {/* Mobile Card View */}
             <div className="md:hidden">
                 <div className="space-y-4 p-4">
                     {renderMobileView()}
                 </div>
             </div>
-
+    
             {/* Pagination */}
             {payments && payments.length > itemsPerPage && (
-                <PaginationControls />
+                <div className="bg-neutral-50 dark:bg-dark-neutral-200 p-4">
+                    <PaginationControls />
+                </div>
             )}
         </Card>
     );

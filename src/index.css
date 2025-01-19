@@ -14,10 +14,14 @@ html {
     }
   }
   [role="listbox"]{
-    background-color: #111827 !important;
+    .dark{
+      background-color: #111827 !important;
+    }
     
   }
   [role="listbox"] li:hover{
-    background-color: #1F2937 !important;
-    
+    .dark{
+      background-color: #1F2937 !important;
+    }
   }
+  

@@ -78,7 +78,7 @@ const EditWorkSheetTable = ({ entry, open, onClose, refetch, availableTasks }) =
             size="xs"
             className="max-h-[90vh] overflow-auto"
         >
-            <DialogHeader className="flex items-center justify-between p-4 bg-primary-50 dark:bg-dark-primary-900/20">
+            <DialogHeader className="flex items-center justify-between p-4 bg-primary-50 dark:bg-dark-neutral-50">
                 <Typography 
                     variant="h5" 
                     className="text-primary-600 dark:text-primary-300 flex items-center gap-2"
@@ -96,7 +96,7 @@ const EditWorkSheetTable = ({ entry, open, onClose, refetch, availableTasks }) =
                 </Button>
             </DialogHeader>
             
-            <DialogBody className="space-y-6 p-4">
+            <DialogBody className="space-y-6 p-4 dark:bg-dark-neutral-100">
                 <div>
                     <Typography 
                         variant="small" 
@@ -154,12 +154,12 @@ const EditWorkSheetTable = ({ entry, open, onClose, refetch, availableTasks }) =
                 </div>
             </DialogBody>
             
-            <DialogFooter className="flex justify-between p-4 bg-neutral-50 dark:bg-dark-neutral-200">
+            <DialogFooter className="flex justify-between p-4 bg-neutral-50 dark:bg-dark-neutral-50">
                 <Button 
                     variant="text" 
                     color="gray" 
                     onClick={onClose}
-                    className="hover:bg-neutral-200 dark:hover:bg-dark-neutral-300"
+                    className="hover:bg-neutral-200 dark:hover:bg-dark-neutral-300 dark:text-neutral-300"
                 >
                     Cancel
                 </Button>

@@ -151,7 +151,7 @@ const WorkSheet = () => {
 
     return (
         <div className="container mx-auto p-4">
-            <Card className="p-6 bg-white dark:bg-dark-surface shadow-elevated">
+            <Card className="p-6 bg-white dark:bg-dark-neutral-100 shadow-elevated">
                 {/* Verification Alert */}
                 {isNotVerifiedOrNoDesignation && (
                     <Alert

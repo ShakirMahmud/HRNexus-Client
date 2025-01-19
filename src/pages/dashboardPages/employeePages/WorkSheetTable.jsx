@@ -99,7 +99,7 @@ const WorkSheetTable = ({availableTasks}) => {
     }
 
     return (
-        <Card className="w-full overflow-hidden">
+        <Card className="w-full overflow-hidden dark:bg-dark-neutral-100">
             <InfiniteScroll
                 dataLength={visibleEntries}
                 next={loadMoreEntries}
@@ -126,7 +126,7 @@ const WorkSheetTable = ({availableTasks}) => {
                                 {entries.slice(0, visibleEntries).map((entry, index) => (
                                     <Card
                                         key={index}
-                                        className="border border-neutral-200 dark:border-dark-neutral-300 p-4 hover:shadow-md transition-shadow"
+                                        className="border border-neutral-200 dark:border-dark-neutral-300 dark:bg-dark-neutral-100 p-4 hover:shadow-md transition-shadow"
                                     >
                                         <div className="flex justify-between items-center mb-2">
                                             <Typography
@@ -215,7 +215,7 @@ const WorkSheetTable = ({availableTasks}) => {
                                                     variant="ghost"
                                                     color="blue"
                                                     size="sm"
-                                                    className="w-fit inline-block mx-auto"
+                                                    className="w-fit inline-block mx-auto dark:text-dark-primary-900"
                                                 />
                                             </td>
                                             <td className="p-4 w-[25%] text-center">  {/* For Date */}
