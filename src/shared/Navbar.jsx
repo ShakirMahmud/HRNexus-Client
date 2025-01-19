@@ -207,6 +207,7 @@ const NavbarDefault = () => {
         <div className="flex flex-col items-center gap-x-1">
           <Button
             fullWidth
+            onClick={() => navigate('/login')}
             variant="outlined"
             size="sm"
             className="mb-2 
@@ -217,6 +218,7 @@ const NavbarDefault = () => {
           </Button>
           <Button
             fullWidth
+            onClick={() => navigate('/register')}
             variant="gradient"
             size="sm"
             className="bg-gradient-to-r 
