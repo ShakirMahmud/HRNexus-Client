@@ -125,7 +125,7 @@ const EmployeeTable = ({
             }
         },
         {
-            header: 'Bank & Salary to Pay',
+            header: 'Bank Account & Salary to Pay',
             cell: ({ row }) => {
                 const employee = row.original;
                 return (
@@ -150,6 +150,7 @@ const EmployeeTable = ({
         },
         {
             header: 'Actions',
+            
             cell: ({ row }) => {
                 const employee = row.original;
                 return (

@@ -2,15 +2,15 @@ import React, { useState, useEffect } from "react";
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import Swal from "sweetalert2";
-import { 
-    Button, 
-    Dialog, 
-    DialogBody, 
-    DialogFooter, 
-    DialogHeader, 
-    Option, 
-    Select, 
-    Typography 
+import {
+    Button,
+    Dialog,
+    DialogBody,
+    DialogFooter,
+    DialogHeader,
+    Option,
+    Select,
+    Typography
 } from "@material-tailwind/react";
 import usePayment from "../../../hooks/usePayment";
 
@@ -19,7 +19,7 @@ const CheckoutModal = ({ employee, isOpen, onClose }) => {
     const elements = useElements();
     const axiosSecure = useAxiosSecure();
 
-    const [month, setMonth] = useState('');
+    // const [month, setMonth] = useState('');
     const [year, setYear] = useState('');
     const [processing, setProcessing] = useState(false);
     const [error, setError] = useState(null);
@@ -28,42 +28,42 @@ const CheckoutModal = ({ employee, isOpen, onClose }) => {
     const { payments } = usePayment();
 
     // Check if payment already exists for the selected month and year
-    const isPaymentAlreadyMade = () => {
-        return payments.some(payment => 
-            payment.employeeEmail === employee.email && 
-            payment.month === parseInt(month) && 
-            payment.year === parseInt(year)
-        );
-    };
+    // const isPaymentAlreadyMade = () => {
+    //     return payments.some(payment =>
+    //         payment.employeeEmail === employee.email &&
+    //         payment.month === parseInt(month) &&
+    //         payment.year === parseInt(year)
+    //     );
+    // };
 
     // Create payment intent when modal opens and total salary is available
     useEffect(() => {
-        if (isOpen && employee?.totalSalary > 0) {
+        if (isOpen && employee?.amount> 0) {
             axiosSecure.post('/payments/paymentIntent', {
-                salary: employee.totalSalary
+                salary: employee.amount
             })
-            .then(response => {
-                setClientSecret(response.data.clientSecret);
-            })
-            .catch(error => {
-                console.error("Error creating payment intent", error);
-                setError("Could not initialize payment");
-            });
+                .then(response => {
+                    setClientSecret(response.data.clientSecret);
+                })
+                .catch(error => {
+                    console.error("Error creating payment intent", error);
+                    setError("Could not initialize payment");
+                });
         }
     }, [isOpen, employee, axiosSecure]);
 
     const handlePayment = async (event) => {
         event.preventDefault();
-        if (!month || !year) {
-            setError("Please provide both month and year");
-            return;
-        }
+        // if (!month || !year) {
+        //     setError("Please provide both month and year");
+        //     return;
+        // }
 
         // Check for duplicate payment
-        if (isPaymentAlreadyMade()) {
-            setError(`Payment for ${month}/${year} already exists`);
-            return;
-        }
+        // if (isPaymentAlreadyMade()) {
+        //     setError(`Payment for ${month}/${year} already exists`);
+        //     return;
+        // }
 
         if (!stripe || !elements) {
             setError("Payment processing unavailable");
@@ -88,8 +88,8 @@ const CheckoutModal = ({ employee, isOpen, onClose }) => {
                     payment_method: {
                         card: card,
                         billing_details: {
-                            name: employee.name || 'Unknown',
-                            email: employee.email || 'Unknown'
+                            name: employee.employeeName || 'Unknown',
+                            email: employee.employeeEmail || 'Unknown'
                         }
                     }
                 }
@@ -104,23 +104,19 @@ const CheckoutModal = ({ employee, isOpen, onClose }) => {
             if (paymentIntent.status === 'succeeded') {
                 // Prepare payment request
                 const paymentRequest = {
-                    employeeEmail: employee.email,
-                    employeeName: employee.name,
-                    month: parseInt(month),
-                    year: parseInt(year),
-                    amount: employee.totalSalary,
                     transactionId: paymentIntent.id,
-                    status: 'pending'
+                    status: 'completed',
+                    paymentDate: new Date().toISOString(),
                 };
 
                 // Submit payment request to backend
-                await axiosSecure.post('/payments', paymentRequest);
+                await axiosSecure.put(`/payments/${employee._id}`, paymentRequest);
 
                 // Show success toast
                 Swal.fire({
                     icon: 'success',
                     title: 'Payment Successful',
-                    text: `Payment for ${employee.name} has been processed`,
+                    text: `Payment for ${employee.employeeName} has been processed successfully.`,
                     toast: true,
                     position: 'top-end',
                     showConfirmButton: false,
@@ -136,84 +132,69 @@ const CheckoutModal = ({ employee, isOpen, onClose }) => {
             setProcessing(false);
         }
     };
+    const getMonthName = (monthNumber) => {
+        const months = [
+            'January', 'February', 'March', 'April', 'May', 'June', 
+            'July', 'August', 'September', 'October', 'November', 'December'
+        ];
+        return months[monthNumber - 1];
+    };
 
     return (
-        <Dialog 
-            open={isOpen} 
-            handler={onClose} 
-            size="md" 
+        <Dialog
+            open={isOpen}
+            handler={onClose}
+            size="md"
             className="dark:bg-dark-surface"
         >
             <DialogHeader className="text-neutral-800 dark:text-neutral-100 border-b border-neutral-200 dark:border-dark-neutral-300">
-                Salary Payment for {employee.name}
+                Salary Payment for {employee.employeeName}
             </DialogHeader>
             <DialogBody>
                 <div className="grid gap-4">
                     <Typography className="text-neutral-800 dark:text-neutral-100">
-                        Total Salary: 
+                        Total Salary:
                         <span className="text-primary-600 dark:text-dark-primary-400 ml-2">
-                            ${employee.totalSalary}
+                            ${employee.amount}
                         </span>
                     </Typography>
-    
+
                     {/* Month and Year Selection */}
                     <div className="grid lg:grid-cols-2 gap-4">
-                        <Select
-                            label="Payment Month"
-                            value={month}
-                            onChange={(value) => {
-                                setMonth(value);
-                                setError(null); 
-                            }}
-                            error={!!error}
-                            className="dark:text-neutral-100"
-                            labelProps={{
-                                className: 'text-neutral-700 dark:text-neutral-300'
-                            }}
-                            
-                            menuProps={{
-                                className: "bg-white dark:bg-dark-neutral-800 text-neutral-800 dark:text-neutral-300"
-                            }}
-                        >
-                            {[...Array(12)].map((_, index) => (
-                                <Option 
-                                    key={index + 1} 
-                                    value={index + 1}
-                                    className="text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-dark-neutral-700"
+                        <div>
+                            <Typography
+                                variant="small"
+                                className="mb-2 text-neutral-600 dark:text-neutral-400"
+                            >
+                                Payment Month
+                            </Typography>
+                            <div className="p-3 bg-neutral-100 dark:bg-dark-neutral-200 rounded-lg">
+                                <Typography
+                                    variant="small"
+                                    className="text-neutral-800 dark:text-neutral-100"
                                 >
-                                    {new Date(0, index).toLocaleString('default', { month: 'long' })}
-                                </Option>
-                            ))}
-                        </Select>
-                        <Select
-                            label="Payment Year"
-                            value={year}
-                            onChange={(value) => {
-                                setYear(value);
-                                setError(null); 
-                            }}
-                            error={!!error}
-                            className="dark:text-neutral-100"
-                            labelProps={{
-                                className: 'text-neutral-700 dark:text-neutral-300'
-                            }}
-                            
-                            menuProps={{
-                                className: "bg-white dark:bg-dark-neutral-800 text-neutral-800 dark:text-neutral-300"
-                            }}
-                        >
-                            {[2023, 2024, 2025].map((yearOption) => (
-                                <Option 
-                                    key={yearOption} 
-                                    value={yearOption}
-                                    className="text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-dark-neutral-700"
+                                    {getMonthName(employee.month)}
+                                </Typography>
+                            </div>
+                        </div>
+                        <div>
+                            <Typography
+                                variant="small"
+                                className="mb-2 text-neutral-600 dark:text-neutral-400"
+                            >
+                                Payment Year
+                            </Typography>
+                            <div className="p-3 bg-neutral-100 dark:bg-dark-neutral-200 rounded-lg">
+                                <Typography
+                                    variant="small"
+                                    className="text-neutral-800 dark:text-neutral-100"
                                 >
-                                    {yearOption}
-                                </Option>
-                            ))}
-                        </Select>
+                                    {employee.year}
+                                </Typography>
+                            </div>
+                        </div>
                     </div>
-    
+
                     {/* Stripe Card Element */}
                     <div className="bg-neutral-100 dark:bg-dark-neutral-200 p-4 rounded-lg">
                         <CardElement
@@ -231,12 +212,12 @@ const CheckoutModal = ({ employee, isOpen, onClose }) => {
                             }}
                         />
                     </div>
-    
+
                     {/* Error Display */}
                     {error && (
-                        <Typography 
-                            color="red" 
-                            variant="small" 
+                        <Typography
+                            color="red"
+                            variant="small"
                             className="mt-2 text-danger-500 dark:text-danger-400"
                         >
                             {error}
@@ -245,8 +226,8 @@ const CheckoutModal = ({ employee, isOpen, onClose }) => {
                 </div>
             </DialogBody>
             <DialogFooter className="border-t border-neutral-200 dark:border-dark-neutral-300">
-                <Button 
-                    color="blue" 
+                <Button
+                    color="blue"
                     onClick={handlePayment}
                     disabled={processing || !stripe}
                     className="dark:bg-primary-600 dark:hover:bg-primary-500 dark:text-white"

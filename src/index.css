@@ -13,15 +13,31 @@ html {
       scrollbar-color: #4B5563 #1F2937;
     }
   }
-  [role="listbox"]{
-    .dark{
-      background-color: #111827 !important;
-    }
-    
-  }
-  [role="listbox"] li:hover{
-    .dark{
-      background-color: #1F2937 !important;
-    }
-  }
+/* General styling for listbox in dark mode */
+html.dark [role="listbox"] {
+  background-color: #111827 !important; /* Dark background */
+  border: 2px solid #4B5563 !important; /* Dark border */
+}
+
+/* Hover state for list items in dark mode */
+html.dark [role="listbox"] li:hover {
+  background-color: #1F2937 !important; /* Slightly lighter dark background */
+}
+html.dark [role='option']{
+  color: white !important;
+}
+html.dark .react-datepicker__month-container{
+  background-color: #1F2937 !important;
+}
+html.dark .react-datepicker__header{
+  background-color: #1F2937 !important;
   
+}
+html.dark .react-datepicker__current-month{
+  color: white !important;
+  
+}
+html.dark .react-datepicker__day-name{
+  color: white !important;
+  
+}

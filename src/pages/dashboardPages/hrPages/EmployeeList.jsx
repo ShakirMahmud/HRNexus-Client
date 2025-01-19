@@ -8,8 +8,9 @@ import Swal from 'sweetalert2';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import { useNavigate } from 'react-router-dom';
+import PaymentProcessing from './PaymentProcessing';
 
-const stripePromise = loadStripe(import.meta.env.VITE_Payment_Gateway_Key);
+
 const EmployeeListPage = () => {
     // const { isHR } = useHR();
     const axiosSecure = useAxiosSecure();
@@ -18,27 +19,22 @@ const EmployeeListPage = () => {
     const { hrsAndEmployees, isUsersLoading, refetch } = useUsers();
     const navigate = useNavigate();
 
-    // All existing state and query hooks
-    const { data: totalSalaries = [], refetch: refetchTotalSalaries } = useQuery({
-        queryKey: ['totalSalaries'],
-        queryFn: async () => {
-            const res = await axiosSecure.get('/workSheet/totalSalary');
-            return res.data;
-        }
-    });
-
-    // All existing handler functions
+    const totalSalaries = hrsAndEmployees.map((employee) => ({
+        _id: employee.email, 
+        totalSalary: employee.salary || 0,
+    })) 
+    
     const handleDesignationChange = async (employee, designation) => {
         const DESIGNATION_RATES = {
-            'Social Media Executive': 20,
-            'Sales Assistant': 25,
-            'Digital Marketer': 30,
-            'Content Writer': 22,
-            'Software Developer': 40,
-            'Graphic Designer': 35,
-            'Customer Support Specialist': 20
+            'Social Media Executive': 2000,
+            'Sales Assistant': 2500,
+            'Digital Marketer': 3000,
+            'Content Writer': 2200,
+            'Software Developer': 4000,
+            'Graphic Designer': 3500,
+            'Customer Support Specialist': 2000
         };
-        const updatedUser = { designation: designation, salaryPerHour: DESIGNATION_RATES[designation] };
+        const updatedUser = { designation: designation, salary: DESIGNATION_RATES[designation] };
         try {
             await axiosSecure.put(`/users/${employee._id}`, updatedUser)
                 .then(res => {
@@ -53,7 +49,7 @@ const EmployeeListPage = () => {
                             text: `${employee.name}'s designation has been updated to ${designation}`
                         });
                         refetch();
-                        refetchTotalSalaries();
+                        // refetchTotalSalaries();
                     } else {
                         Swal.fire({
                             icon: 'error',
@@ -129,9 +125,9 @@ const EmployeeListPage = () => {
 
         setSelectedEmployee(employee);
         setIsCheckoutModalOpen(true);
+
     };
 
-    // Navigate to Employee Details
     const navigateToEmployeeDetails = (employee) => {
         // console.log(employee)
         navigate(`/dashboard/employee-details/${employee._id}`, {
@@ -150,7 +146,7 @@ const EmployeeListPage = () => {
                 onShowDetails={navigateToEmployeeDetails}
             // onInitiateCheckout={navigateToCheckout}
             />
-            {isCheckoutModalOpen && (
+            {/* {isCheckoutModalOpen && (
                 <Elements stripe={stripePromise}>
                     <CheckoutModal
                         employee={selectedEmployee}
@@ -158,6 +154,15 @@ const EmployeeListPage = () => {
                         onClose={() => setIsCheckoutModalOpen(false)}
                     />
                 </Elements>
+            )} */}
+            {isCheckoutModalOpen && (
+                
+                    <PaymentProcessing
+                        employee={selectedEmployee}
+                        isOpen={isCheckoutModalOpen}
+                        onClose={() => setIsCheckoutModalOpen(false)}
+                    />
+               
             )}
         </div>
     );

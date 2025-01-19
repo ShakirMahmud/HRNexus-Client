@@ -25,7 +25,7 @@ const AllEmployeeList = () => {
         setViewMode(prevMode => (prevMode === 'table' ? 'grid' : 'table'));
     };
     const handleMakeHR = async (employee) => {
-        const updatedUser = { roleValue: 'HR', salaryPerHour: 2500, designation: 'HR' };
+        const updatedUser = { roleValue: 'HR', salary: 2500, designation: 'HR' };
             Swal.fire({
                 title: 'Are you sure?',
                 text: 'You are about to make this employee a HR. This action cannot be undone.',

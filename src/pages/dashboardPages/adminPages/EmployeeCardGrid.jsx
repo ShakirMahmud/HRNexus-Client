@@ -36,10 +36,7 @@ const EmployeeCardGrid = ({ employees, onFireEmployee, refetch, handleMakeHR }) 
                 {employees.map(employee => {
                     const isHR = employee.roleValue === 'HR';
                     const isFired = employee.isFired;
-                    const salaryDisplay = isHR
-                        ? `$${(employee.salaryPerHour).toFixed(2)} /month`
-                        : `$${employee.salaryPerHour.toFixed(2)} /hour`;
-    
+                    const salaryDisplay = `$${(employee.salary).toFixed(2)}`
                     return (
                         <Card
                             key={employee._id}

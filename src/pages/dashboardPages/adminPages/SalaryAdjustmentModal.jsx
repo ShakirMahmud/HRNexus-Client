@@ -28,25 +28,21 @@ const SalaryAdjustmentModal = ({ isOpen, onClose, employee, refetch }) => {
                 isHR: false,
                 initialSalary: '0',
                 currentSalaryDisplay: 'N/A',
-                currentSalaryPerHour: 0
+                currentSalary: 0
             };
         }
 
         const isHR = employee.roleValue === 'HR';
         
-        const currentSalaryDisplay = isHR 
-            ? `$${((employee.salaryPerHour || 0) ).toFixed(2)} /month`
-            : `$${(employee.salaryPerHour || 0).toFixed(2)} /hour`;
+        const currentSalaryDisplay = `$${((employee.salary || 0) ).toFixed(2)} /month`
 
-        const initialSalary = isHR 
-            ? ((employee.salaryPerHour || 0)).toFixed(2)
-            : (employee.salaryPerHour || 0).toFixed(2);
+        const initialSalary = ((employee.salary || 0)).toFixed(2)
 
         return {
             isHR,
             initialSalary,
             currentSalaryDisplay,
-            currentSalaryPerHour: employee.salaryPerHour || 0
+            currentSalary: employee.salary || 0
         };
     }, [employee]);
 
@@ -76,20 +72,20 @@ const SalaryAdjustmentModal = ({ isOpen, onClose, employee, refetch }) => {
         }
 
         // Calculate salary per hour
-        const salaryPerHour = modalContent.isHR 
+        const salary = modalContent.isHR 
             ? parsedSalary
             : parsedSalary;
 
         // Prevent decreasing salary
-        if (salaryPerHour < modalContent.currentSalaryPerHour) {
-            showErrorModal(`You can only increase the salary. Current salary is $${(modalContent.currentSalaryPerHour).toFixed(2)} per hour.`);
+        if (salary < modalContent.currentSalary) {
+            showErrorModal(`You can only increase the salary. Current salary is $${(modalContent.currentSalary).toFixed(2)} per hour.`);
             return;
         }
         
 
         try {
             const response = await axiosSecure.put(`/users/${employee._id}`, { 
-                salaryPerHour: salaryPerHour 
+                salary: salary 
             });
 
             if (response.data.modifiedCount > 0) {
