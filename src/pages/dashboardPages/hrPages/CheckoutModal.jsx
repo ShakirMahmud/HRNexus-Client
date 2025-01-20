@@ -87,8 +87,6 @@ const CheckoutModal = ({ employee, isOpen, onClose, paymentRefetch }) => {
                 // Submit payment request to backend
                 await axiosSecure.put(`/payments/${employee._id}`, paymentRequest);
                 paymentRefetch();
-
-                // Show success toast
                 Swal.fire({
                     icon: 'success',
                     title: 'Payment Successful',

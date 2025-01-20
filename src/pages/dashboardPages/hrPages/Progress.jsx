@@ -21,7 +21,6 @@ const Progress = () => {
     const [selectedMonth, setSelectedMonth] = useState('');
     const [visibleRecords, setVisibleRecords] = useState(10);
 
-    // Get unique employee names for the dropdown
     const employeeNames = useMemo(() => {
         const names = [...new Set(workSheet.map(record => record.email))];
         return names;

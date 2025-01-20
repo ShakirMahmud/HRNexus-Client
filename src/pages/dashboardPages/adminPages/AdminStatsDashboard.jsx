@@ -6,8 +6,6 @@ import LoadingSpinner from '../../../components/LoadingSpinner';
 
 const AdminStatsDashboard = () => {
     const axiosSecure = useAxiosSecure();
-
-    // Fetch Admin Stats
     const { 
         data: adminStats = {}, 
         isLoading: adminStatsLoading 

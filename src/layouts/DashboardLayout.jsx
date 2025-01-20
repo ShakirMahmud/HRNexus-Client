@@ -77,9 +77,6 @@ const DashboardLayout = () => {
             </div>
 
             <List className="space-y-1">
-                {/* Dashboard Navigation Links */}
-
-
                 {/* Admin Links */}
                 {isAdmin && (
                     <>

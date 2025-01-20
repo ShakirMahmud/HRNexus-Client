@@ -1,4 +1,3 @@
-import { useState, useCallback } from "react";
 import Swal from "sweetalert2";
 import { useLocation, useNavigate } from "react-router-dom";
 import useAuth from "./useAuth";
@@ -48,7 +47,6 @@ const useGoogleSignIn = () => {
         return;
       }
   
-      // Refetch roles before navigation
       setUser(user);
       await Promise.all([refetchAdmin(), refetchHR(), refetchEmployee()]);
       navigate(location?.state || "/");
@@ -61,8 +59,6 @@ const useGoogleSignIn = () => {
       });
     }
   };
-  
-
   return { handleGoogleSignIn, };
 };
 

@@ -5,8 +5,6 @@ import { Typography, Button } from '@material-tailwind/react';
 import img1 from '../../assets/front-view-group-young-freelancers-office-have-conversation-smiling-min.jpg'
 import img2 from '../../assets/modern-equipped-computer-lab-min.jpg'
 import img3 from '../../assets/people-taking-part-business-event-min.jpg'
-
-// Import Swiper styles
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';

@@ -20,7 +20,6 @@ const HRStatsDashboard = () => {
                 throw err;
             }
         },
-        // Add retry and error handling
         retry: 1,
         refetchOnWindowFocus: false
     });

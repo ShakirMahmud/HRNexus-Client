@@ -31,8 +31,6 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const axiosSecure = useAxiosSecure();
-
-  // State for form errors
   const [formErrors, setFormErrors] = useState({
     email: '',
     password: '',
@@ -42,7 +40,6 @@ const Login = () => {
   const handleSignIn = async (e) => {
     e.preventDefault();
 
-    // Reset previous errors
     setFormErrors({
       email: '',
       password: '',
@@ -57,12 +54,10 @@ const Login = () => {
       const result = await userLogin(email, password);
       const user = result.user;
 
-      // Check if the user is fired
       const response = await axiosSecure.get(`/users/check?email=${user.email}`);
       const userData = response.data;
 
       if (userData.isFired) {
-        // Log the user out and notify them
         await logOut();
         Swal.fire({
           icon: "error",
@@ -78,14 +73,13 @@ const Login = () => {
         icon: "success",
         title: "Login Successful",
         text: "You have successfully logged in.",
-        confirmButtonText: "OK"
+        timer: 2000
       }).then(() => {
         navigate(location?.state ? location?.state : '/');
       })
     } catch (err) {
       console.error(err);
 
-      // Handle specific Firebase authentication errors
       switch (err.code) {
         case 'auth/invalid-credential':
           setFormErrors(prev => ({

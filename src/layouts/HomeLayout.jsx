@@ -3,7 +3,6 @@ import NavbarDefault from "../shared/Navbar";
 import Footer from "../shared/Footer";
 import { useEffect } from "react";
 
-
 const HomeLayout = () => {
     useEffect(()=>{
         window.scrollTo(0, 0);

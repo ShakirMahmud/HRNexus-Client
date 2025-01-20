@@ -100,8 +100,6 @@ const SalaryAdjustmentModal = ({ isOpen, onClose, employee, refetch }) => {
                     showConfirmButton: false,
                     timer: 3000
                 });
-                
-                
             } else {
                 showErrorModal(`Could not adjust salary for ${employee.name}.`);
             }

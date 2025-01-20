@@ -111,7 +111,7 @@ const CoreValues = () => {
                             key={index}
                             variants={itemVariants}
                             whileHover="hover"
-                            className="group flex flex-col h-full" // Ensure full height
+                            className="group flex flex-col h-full" 
                         >
                             <div className="bg-gray-100 dark:bg-dark-neutral-300 p-6 rounded-xl shadow-lg text-center flex-grow transition-all duration-300 hover:shadow-xl">
                                 <div className="flex justify-center mb-4">

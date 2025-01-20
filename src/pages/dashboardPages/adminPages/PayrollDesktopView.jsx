@@ -13,7 +13,6 @@ const PayrollDesktopView = ({
     getMonthName, 
     handlePayEmployee 
 }) => {
-    // Group payments by year and month, sorted with latest first
     const groupedPayments = useMemo(() => {
         const grouped = {};
         payments.forEach(payment => {

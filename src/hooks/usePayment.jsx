@@ -3,7 +3,6 @@ import useAxiosSecure from "./useAxiosSecure";
 
 const usePayment = (email) => {
     const axiosSecure = useAxiosSecure();
-    
     const {data: payments = [], isLoading: paymentLoading, refetch: paymentRefetch} = useQuery({
         queryKey: ['payments'],
         queryFn: async () => {

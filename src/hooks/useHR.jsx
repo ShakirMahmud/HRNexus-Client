@@ -1,4 +1,3 @@
-
 import { useQuery } from "@tanstack/react-query";
 import useAuth from "./useAuth";
 import useAxiosSecure from "./useAxiosSecure";
@@ -12,7 +11,6 @@ const useHR = () => {
         queryFn: async () => {
             if (user?.email) {
                 const res = await axiosSecure.get(`/users/hr/${user?.email}`);
-                // console.log('admin', res.data);
                 return res.data?.isHR;
             } else {
                 return false;

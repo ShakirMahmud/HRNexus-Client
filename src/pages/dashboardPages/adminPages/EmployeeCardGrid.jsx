@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
     Card,
     CardHeader,
@@ -29,11 +29,19 @@ const EmployeeCardGrid = ({ employees, onFireEmployee, refetch, handleMakeHR }) 
         setIsSalaryModalOpen(true);
     };
 
+    const sortedEmployees = useMemo(() => {
+            return [...employees].sort((a, b) => {
+                if (a.isFired === b.isFired) {
+                    return a.name.localeCompare(b.name);
+                }
+                return a.isFired ? 1 : -1;
+            });
+        }, [employees]);
 
     return (
         <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {employees.map(employee => {
+                {sortedEmployees.map(employee => {
                     const isHR = employee.roleValue === 'HR';
                     const isFired = employee.isFired;
                     const salaryDisplay = `$${(employee.salary).toFixed(2)}`

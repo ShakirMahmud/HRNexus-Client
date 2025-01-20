@@ -48,7 +48,6 @@ const AdminStats = ({ adminStats, contact }) => {
         amount: trend.totalPaid
     })) || [];
 
-    // Colors for charts
     const COLORS = ['#6366f1', '#10b981', '#f43f5e', '#8b5cf6', '#f59e0b'];
 
     return (

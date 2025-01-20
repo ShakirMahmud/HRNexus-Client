@@ -21,7 +21,6 @@ import { Link, useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import useAxiosPublic from "../../hooks/useAxiosPublic";
 import Swal from "sweetalert2";
-import RoleSelectionModal from "./RoleSelectionModal";
 import useGoogleSignIn from "../../hooks/useGoogleSignIn";
 import img from '../../assets/signup-animation.json'
 import Lottie from "lottie-react";
@@ -69,7 +68,6 @@ const Register = () => {
         }
 
         try {
-            // Image handling
             let imageUrl = generateInitialAvatar(name);
             if (imageFile) {
                 const imageFormData = new FormData();

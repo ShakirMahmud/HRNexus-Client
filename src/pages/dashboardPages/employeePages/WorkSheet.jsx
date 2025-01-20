@@ -72,7 +72,6 @@ const WorkSheet = () => {
     const { refetch } = useWorkSheet();
     const { userByEmail, userByEmailLoading } = useUsers();
 
-    // Determine available tasks based on user's designation
     const availableTasks = userByEmail?.designation
         ? DESIGNATION_TASKS[userByEmail.designation] || []
         : [];
@@ -123,8 +122,6 @@ const WorkSheet = () => {
                     timer: 1500,
                     title: 'Entry Added Successfully'
                 });
-
-                // Reset form
                 setSelectedTask('');
                 setHoursWorked('');
                 setSelectedDate(new Date());
