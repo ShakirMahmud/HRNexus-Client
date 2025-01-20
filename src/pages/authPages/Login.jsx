@@ -21,6 +21,8 @@ import Swal from "sweetalert2";
 import useGoogleSignIn from "../../hooks/useGoogleSignIn";
 import RoleSelectionModal from "./RoleSelectionModal";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
+import img from '../../assets/login-animation.json'
+import Lottie from "lottie-react";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -119,14 +121,7 @@ const Login = () => {
     }
   };
 
-  const {
-    isRoleModalOpen,
-    setIsRoleModalOpen,
-    handleGoogleSignIn,
-    handleRoleConfirm,
-    role,
-    setRole,
-  } = useGoogleSignIn();
+  const { handleGoogleSignIn } = useGoogleSignIn();
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center px-4 py-8">
@@ -141,10 +136,11 @@ const Login = () => {
           <Typography className="text-center mb-6 text-lg">
             Sign in to continue to your dashboard
           </Typography>
-          <img
-            src="/login-illustration.svg"
-            alt="Login Illustration"
-            className="w-full max-w-xs"
+          <Lottie
+            animationData={img}
+            loop={true}
+            className="max-w-full h-[400px] w-full"
+            style={{ maxWidth: '500px' }}
           />
         </div>
 
@@ -212,9 +208,6 @@ const Login = () => {
                 </Typography>
               )}
             </div>
-
-            
-
             {formErrors.general && (
               <Typography variant="small" color="red" className="text-center">
                 {formErrors.general}
@@ -255,14 +248,6 @@ const Login = () => {
           </div>
         </div>
       </Card>
-
-      <RoleSelectionModal
-        isOpen={isRoleModalOpen}
-        onClose={() => setIsRoleModalOpen(false)}
-        onConfirm={handleRoleConfirm}
-        role={role}
-        setRole={setRole}
-      />
     </div>
   );
 };

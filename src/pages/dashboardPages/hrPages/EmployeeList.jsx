@@ -1,28 +1,54 @@
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import EmployeeTable from './EmployeeTable';
-import CheckoutModal from './CheckoutModal';
 import useUsers from '../../../hooks/useUsers';
-import { useQuery } from '@tanstack/react-query';
 import useAxiosSecure from '../../../hooks/useAxiosSecure';
 import Swal from 'sweetalert2';
-import { Elements } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
 import { useNavigate } from 'react-router-dom';
 import PaymentProcessing from './PaymentProcessing';
 
-
 const EmployeeListPage = () => {
-    // const { isHR } = useHR();
     const axiosSecure = useAxiosSecure();
     const [selectedEmployee, setSelectedEmployee] = useState(null);
     const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
     const { hrsAndEmployees, isUsersLoading, refetch } = useUsers();
     const navigate = useNavigate();
 
-    const totalSalaries = hrsAndEmployees.map((employee) => ({
-        _id: employee.email, 
-        totalSalary: employee.salary || 0,
-    })) 
+    const [displayedEmployees, setDisplayedEmployees] = useState([]);
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
+
+    useEffect(() => {
+        if (hrsAndEmployees.length > 0) {
+            const initialEmployees = hrsAndEmployees.slice(0, 8);
+            setDisplayedEmployees(initialEmployees);
+            setHasMore(hrsAndEmployees.length > 8);
+        }
+    }, [hrsAndEmployees]);
+
+    // Function to load more employees
+    const loadMoreEmployees = useCallback(() => {
+        const nextPage = page + 1;
+        const startIndex = (nextPage - 1) * 8;
+        const endIndex = startIndex + 8;
+        
+        const newEmployees = hrsAndEmployees.slice(startIndex, endIndex);
+        
+        if (newEmployees.length > 0) {
+            setDisplayedEmployees(prev => [...prev, ...newEmployees]);
+            setPage(nextPage);
+            setHasMore(endIndex < hrsAndEmployees.length);
+        } else {
+            setHasMore(false);
+        }
+    }, [page, hrsAndEmployees]);
+
+    const totalSalaries = useMemo(() => 
+        displayedEmployees.map((employee) => ({
+            _id: employee.email, 
+            totalSalary: employee.salary || 0,
+        })), 
+        [displayedEmployees]
+    );
     
     const handleDesignationChange = async (employee, designation) => {
         const DESIGNATION_RATES = {
@@ -49,7 +75,6 @@ const EmployeeListPage = () => {
                             text: `${employee.name}'s designation has been updated to ${designation}`
                         });
                         refetch();
-                        // refetchTotalSalaries();
                     } else {
                         Swal.fire({
                             icon: 'error',
@@ -66,7 +91,6 @@ const EmployeeListPage = () => {
     }
 
     const handleToggleVerification = async (employee) => {
-        // Check if designation is set
         if (!employee.designation) {
             Swal.fire({
                 icon: 'warning',
@@ -122,39 +146,30 @@ const EmployeeListPage = () => {
             });
             return;
         }
-
         setSelectedEmployee(employee);
         setIsCheckoutModalOpen(true);
-
     };
 
     const navigateToEmployeeDetails = (employee) => {
-        // console.log(employee)
         navigate(`/dashboard/employee-details/${employee._id}`, {
             state: { employee }
         })
     };
+    
+    const filterFiredEmployees = hrsAndEmployees.filter(user => user.isFired !== true);
 
     return (
         <div className="container mx-auto p-4">
             <EmployeeTable
-                employees={hrsAndEmployees}
+                employees={filterFiredEmployees}
                 totalSalaries={totalSalaries}
                 onDesignationChange={handleDesignationChange}
                 onToggleVerification={handleToggleVerification}
                 onPayEmployee={handlePayEmployee}
                 onShowDetails={navigateToEmployeeDetails}
-            // onInitiateCheckout={navigateToCheckout}
+                fetchMoreEmployees={loadMoreEmployees}
+                hasMore={hasMore}
             />
-            {/* {isCheckoutModalOpen && (
-                <Elements stripe={stripePromise}>
-                    <CheckoutModal
-                        employee={selectedEmployee}
-                        isOpen={isCheckoutModalOpen}
-                        onClose={() => setIsCheckoutModalOpen(false)}
-                    />
-                </Elements>
-            )} */}
             {isCheckoutModalOpen && (
                 
                     <PaymentProcessing

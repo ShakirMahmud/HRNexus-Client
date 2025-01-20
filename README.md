@@ -7,11 +7,11 @@ HRNexus is a comprehensive Employee Management Platform designed to streamline H
 
 ## 🚀 Live Links
 - **Frontend:** [Live Site URL](https://hr-nexus-shakir.vercel.app/)
-- **Backend:** [Backend Deployment URL]
+- **Backend:** [Backend Deployment URL](https://hrn-exus-server.vercel.app/)
 
 ## 🔐 Admin Credentials
-- **Email:** admin@workflowpro.com
-- **Password:** Admin123!
+- **Email:** admin@hrnexus.com
+- **Password:** A@aaaa
 
 ## ✨ Key Features
 

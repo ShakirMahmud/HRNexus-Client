@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
     Button,
     Card,
@@ -24,6 +24,14 @@ const EmployeeTable = ({ employees, onFireEmployee, refetch, handleMakeHR }) => 
         setSelectedEmployee(employee);
         setIsSalaryModalOpen(true);
     };
+    const sortedEmployees = useMemo(() => {
+        return [...employees].sort((a, b) => {
+            if (a.isFired === b.isFired) {
+                return a.name.localeCompare(b.name);
+            }
+            return a.isFired ? 1 : -1;
+        });
+    }, [employees]);
 
     return (
         <Card className="w-full overflow-x-auto bg-white dark:bg-dark-surface shadow-lg">
@@ -67,7 +75,7 @@ const EmployeeTable = ({ employees, onFireEmployee, refetch, handleMakeHR }) => 
                         </tr>
                     </thead>
                     <tbody>
-                        {employees.map((employee) => {
+                        {sortedEmployees.map((employee) => {
                             const isHR = employee.roleValue === 'HR';
                             const isFired = employee.isFired;
                             const salaryDisplay = `$${(employee.salary).toFixed(2)} /month`
@@ -185,7 +193,7 @@ const EmployeeTable = ({ employees, onFireEmployee, refetch, handleMakeHR }) => 
 
             {/* Mobile View */}
             <div className="md:hidden">
-                {employees.map((employee) => {
+                {sortedEmployees.map((employee) => {
                     const isHR = employee.roleValue === 'HR';
                     const isFired = employee.isFired;
                     const salaryDisplay = `$${(employee.salary).toFixed(2)} /month`

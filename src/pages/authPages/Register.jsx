@@ -23,13 +23,13 @@ import useAxiosPublic from "../../hooks/useAxiosPublic";
 import Swal from "sweetalert2";
 import RoleSelectionModal from "./RoleSelectionModal";
 import useGoogleSignIn from "../../hooks/useGoogleSignIn";
+import img from '../../assets/signup-animation.json'
+import Lottie from "lottie-react";
 
 const Register = () => {
     const { createUser, setUser, updateUserProfile } = useAuth();
     const navigate = useNavigate();
     const axiosPublic = useAxiosPublic();
-
-    // State management
     const [selectedRole, setSelectedRole] = useState('Employee');
     const [showPassword, setShowPassword] = useState(false);
     const [passwordErrors, setPasswordErrors] = useState({
@@ -38,14 +38,7 @@ const Register = () => {
         specialChar: false
     });
 
-    const {
-        isRoleModalOpen,
-        setIsRoleModalOpen,
-        handleGoogleSignIn,
-        handleRoleConfirm,
-        role,
-        setRole,
-    } = useGoogleSignIn();
+    const { handleGoogleSignIn } = useGoogleSignIn();
 
     // Password validation
     const validatePassword = (password) => {
@@ -64,7 +57,7 @@ const Register = () => {
 
         const form = e.target;
         const name = form.name.value;
-        const email = form.email.value.toLowerCase(); 
+        const email = form.email.value.toLowerCase();
         const bank_account_no = form.bank_account_no.value;
         const password = form.password.value;
         const imageFile = form.image.files[0];
@@ -106,7 +99,7 @@ const Register = () => {
                 image: imageUrl,
                 bank_account_no,
                 salary: roleValue === 'HR' ? 2500 : 0,
-                designation: '',
+                designation: roleValue === 'HR' ? 'HR' : '',
                 isVerified: false
             };
 
@@ -172,7 +165,7 @@ const Register = () => {
                                 placeholder="Full Name"
                                 className="pl-10 !border-neutral-300 focus:!border-primary-500  dark:bg-dark-neutral-200 dark:text-white dark:caret-white"
                                 labelProps={{
-                                    className: "hidden" 
+                                    className: "hidden"
                                 }}
                                 required
                             />
@@ -188,7 +181,7 @@ const Register = () => {
                                 placeholder="Email Address"
                                 className="pl-10 !border-neutral-300 focus:!border-primary-500 dark:bg-dark-neutral-200 dark:text-white dark:caret-white"
                                 labelProps={{
-                                    className: "hidden" 
+                                    className: "hidden"
                                 }}
                                 required
                             />
@@ -203,7 +196,7 @@ const Register = () => {
                                 placeholder="Bank Account Number"
                                 className="pl-10 !border-neutral-300 focus:!border-primary-500 dark:bg-dark-neutral-200 dark:text-white dark:caret-white"
                                 labelProps={{
-                                    className: "hidden" 
+                                    className: "hidden"
                                 }}
                                 required
                             />
@@ -218,7 +211,7 @@ const Register = () => {
                                 placeholder="Password"
                                 className="pr-12 pl-10 !border-neutral-300 focus:!border-primary-500 dark:bg-dark-neutral-200 dark:text-white caret-black dark:caret-white"
                                 labelProps={{
-                                    className: "hidden" 
+                                    className: "hidden"
                                 }}
                                 icon={
                                     showPassword ? (
@@ -276,7 +269,7 @@ const Register = () => {
                                 name="image"
                                 accept="image/*"
                                 label="Upload Profile Picture"
-                                
+
                                 className="!border-neutral-300 border-t-0 focus:!border-primary-500 dark:bg-dark-neutral-200 dark:text-white text-base"
                                 labelProps={{
                                     className: "text-sm dark:text-white  !border-neutral-300"
@@ -309,7 +302,6 @@ const Register = () => {
                             Sign Up
                         </Button>
 
-                        {/* Login Link */}
                         <Typography color="gray" className="mt-4 text-center dark:text-neutral-400">
                             Already have an account?{" "}
                             <Link
@@ -347,22 +339,14 @@ const Register = () => {
                     <Typography className="text-center mb-6">
                         Create your account and start your journey with us
                     </Typography>
-                    <img
-                        src="/register-illustration.svg"
-                        alt="Register Illustration"
-                        className="w-full max-w-xs"
+                    <Lottie
+                        animationData={img}
+                        loop={true}
+                        className="max-w-full h-auto w-full"
+                        style={{ maxWidth: '500px' }}
                     />
                 </div>
             </Card>
-
-            {/* Role Selection Modal */}
-            <RoleSelectionModal
-                isOpen={isRoleModalOpen}
-                onClose={() => setIsRoleModalOpen(false)}
-                onConfirm={handleRoleConfirm}
-                role={role}
-                setRole={setRole}
-            />
         </div>
     );
 };

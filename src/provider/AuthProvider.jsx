@@ -57,18 +57,16 @@ const AuthProvider = ({ children }) => {
     //observer
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-            setLoading(true); // Show loading while checks are in progress
+            setLoading(true);
     
             if (currentUser) {
                 setUser(currentUser);
     
                 try {
-                    // Fetch user data from your backend
                     const response = await axiosPublic.get(`/users/check?email=${currentUser.email}`);
                     const userData = response.data;
     
                     if (userData.isFired) {
-                        // Log out and notify if the user is fired
                         await logOut();
                         Swal.fire({
                             icon: "error",
@@ -76,20 +74,6 @@ const AuthProvider = ({ children }) => {
                             text: "Your account has been terminated. Please contact support.",
                         });
                     } 
-                    // else if (!userData.roleValue) {
-                        
-                    //     await logOut();
-                    //     console.log('userLoggedOut');
-                    //     Swal.fire({
-                    //         icon: "error",
-                    //         toast: true,
-                    //         position: "top",
-                    //         showConfirmButton: false,
-                    //         timer: 1500,
-                    //         title: "Role Required",
-                    //         text: "Please set your role to access the site.",
-                    //     });
-                    // } 
                     else {
                         // User is valid; set token
                         const userInfo = { email: currentUser.email };
@@ -102,7 +86,6 @@ const AuthProvider = ({ children }) => {
                     console.error("Error checking user state:", error);
                 }
             } else {
-                // User not logged in; clear any stored tokens
                 setUser(null);
                 localStorage.removeItem('token');
             }

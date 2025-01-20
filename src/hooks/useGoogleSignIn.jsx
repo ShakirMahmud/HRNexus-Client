@@ -4,6 +4,9 @@ import { useLocation, useNavigate } from "react-router-dom";
 import useAuth from "./useAuth";
 import useAxiosPublic from "./useAxiosPublic";
 import useAxiosSecure from "./useAxiosSecure";
+import useAdmin from "./useAdmin";
+import useHR from "./useHR";
+import useEmployee from "./useEmployee";
 
 const useGoogleSignIn = () => {
   const { setUser, signInWithGoogle, logOut } = useAuth();
@@ -11,83 +14,56 @@ const useGoogleSignIn = () => {
   const axiosSecure = useAxiosSecure();
   const navigate = useNavigate();
   const location = useLocation();
-  const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
-  const [pendingUser, setPendingUser] = useState(null);
-  const [role, setRole] = useState("");
+  const { refetchAdmin} = useAdmin();
+  const { refetchHR } = useHR();
+  const { refetchEmployee } = useEmployee();
 
   const handleGoogleSignIn = async () => {
     try {
-        const result = await signInWithGoogle();
-        const user = result.user;
-
-        // Check if user exists and their status
-        const response = await axiosSecure.get(`/users/check?email=${user.email}`);
-        const userData = response.data;
-        console.log('userData', userData);
-
-        if (userData.exists && !userData.isFired && userData.roleValue) {
-            // User is valid and has a role
-            setUser(user);
-            navigate("/");
-        } else if (userData.isFired) {
-          console.log('User is fired');
-            // Fired user
-            await logOut();
-            Swal.fire({
-                icon: "error",
-                title: "Access Denied",
-                text: "Your account has been terminated. Please contact support.",
-            });
-        } else {
-            // New user or role pending
-            setPendingUser(user);
-            setIsRoleModalOpen(true);
-        }
-    } catch (err) {
-        console.error(err);
+      const result = await signInWithGoogle();
+      const user = result.user;
+      const response = await axiosSecure.get(`/users/check?email=${user.email}`);
+      const userData = response.data;
+  
+      if (!userData.exists && !userData.isFired) {
+        const newUserData = {
+          name: user.displayName,
+          email: user.email,
+          roleValue: "Employee",
+          image: user.photoURL || generateInitialAvatar(user.displayName),
+          bank_account_no: 123456789,
+          salary: 0,
+          designation: "",
+          isVerified: false,
+        };
+        await axiosPublic.post("/users", newUserData);
+      } else if (userData.isFired) {
+        console.log("User is fired");
+        await logOut();
         Swal.fire({
-            icon: "error",
-            title: "Google Sign-In Failed",
-            text: err.message,
+          icon: "error",
+          title: "Access Denied",
+          text: "Your account has been terminated. Please contact support.",
         });
-    }
-};
-
-  const handleRoleConfirm = async ({ role, bankAccountNo }) => {
-    console.log(role);
-    try {
-      const userData = {
-        name: pendingUser.displayName,
-        email: pendingUser.email,
-        roleValue: role,
-        image: pendingUser.photoURL || generateInitialAvatar(pendingUser.displayName),
-        bank_account_no: bankAccountNo,
-        salary: role === 'HR' ? 2500 : 0,
-        designation: '',
-        isVerified: false
-      };
-
-      await axiosPublic.post("/users", userData);
-      setUser(pendingUser);
-      setIsRoleModalOpen(false);
-      navigate(location?.state ? location?.state : '/');
-    } catch (error) {
-      console.error("Error adding user:", error);
+        return;
+      }
+  
+      // Refetch roles before navigation
+      setUser(user);
+      await Promise.all([refetchAdmin(), refetchHR(), refetchEmployee()]);
+      navigate(location?.state || "/");
+    } catch (err) {
+      console.error(err);
       Swal.fire({
         icon: "error",
-        title: "Registration Failed",
-        text: "Unable to complete registration.",
+        title: "Google Sign-In Failed",
+        text: err.message,
       });
     }
   };
-  return {
-    isRoleModalOpen,
-    setIsRoleModalOpen,
-    handleGoogleSignIn,
-    handleRoleConfirm,
-    role,
-    setRole,
-  };
+  
+
+  return { handleGoogleSignIn, };
 };
 
 export default useGoogleSignIn;

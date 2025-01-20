@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     Card,
     Typography,
@@ -34,6 +34,9 @@ const DashboardLayout = () => {
     const openDrawer = () => setIsDrawerOpen(true);
     const closeDrawer = () => setIsDrawerOpen(false);
 
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [])
     const handleLogout = () => {
         logOut()
             .then(() => {

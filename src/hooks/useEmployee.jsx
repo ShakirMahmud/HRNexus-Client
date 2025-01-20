@@ -6,7 +6,7 @@ import useAxiosSecure from "./useAxiosSecure";
 const useEmployee = () => {
     const { user, loading } = useAuth();
     const axiosSecure = useAxiosSecure();
-    const { data: isEmployee, refetch, isLoading: isEmployeeLoading } = useQuery({
+    const { data: isEmployee, refetch: refetchEmployee, isLoading: isEmployeeLoading } = useQuery({
         queryKey: ['employee', user?.email],
         enabled: !loading,
         queryFn: async () => {
@@ -19,7 +19,7 @@ const useEmployee = () => {
             }
         }
     })
-    return {isEmployee, refetch, isEmployeeLoading};
+    return {isEmployee, refetchEmployee, isEmployeeLoading};
 };
 
 export default useEmployee;

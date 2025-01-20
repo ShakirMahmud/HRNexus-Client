@@ -68,8 +68,6 @@ const PaymentProcessing = ({ employee, isOpen, onClose }) => {
         try {
             const response = await axiosSecure.post('/payments', payment);
 
-            console.log('Response from backend:', response);
-
             if (response.data.result.insertedId) {
                 Swal.fire({
                     icon: 'success',

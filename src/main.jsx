@@ -15,11 +15,11 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <DarkModeProvider>
       <ThemeProvider>
-        <AuthProvider>
-          <QueryClientProvider client={queryClient}>
+        <QueryClientProvider client={queryClient}>
+          <AuthProvider>
             <RouterProvider router={router} />
-          </QueryClientProvider>
-        </AuthProvider>
+          </AuthProvider>
+        </QueryClientProvider>
       </ThemeProvider>
     </DarkModeProvider>
   </StrictMode>,

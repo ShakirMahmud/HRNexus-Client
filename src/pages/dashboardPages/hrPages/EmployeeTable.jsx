@@ -13,6 +13,7 @@ import {
     Chip
 } from "@material-tailwind/react";
 import { X, Check, DollarSign, UserIcon, MailIcon } from 'lucide-react';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 const DESIGNATIONS = [
     'Sales Assistant',
@@ -31,6 +32,8 @@ const EmployeeTable = ({
     onToggleVerification,
     onPayEmployee,
     onShowDetails,
+    fetchMoreEmployees,
+    hasMore
 }) => {
     // Enriched employees with total salary
     const enrichedEmployees = useMemo(() => {
@@ -150,7 +153,6 @@ const EmployeeTable = ({
         },
         {
             header: 'Actions',
-            
             cell: ({ row }) => {
                 const employee = row.original;
                 return (
@@ -190,6 +192,31 @@ const EmployeeTable = ({
 
     return (
         <Card className="w-full overflow-x-auto bg-white dark:bg-dark-background">
+            <InfiniteScroll
+                dataLength={employees.length}
+                next={fetchMoreEmployees}
+                hasMore={hasMore}
+                loader={
+                    <div className="text-center py-4">
+                        <Typography 
+                            variant="small" 
+                            className="text-neutral-600 dark:text-neutral-300"
+                        >
+                            Loading more employees...
+                        </Typography>
+                    </div>
+                }
+                endMessage={
+                    <div className="text-center py-4">
+                        <Typography 
+                            variant="small" 
+                            className="text-neutral-600 dark:text-neutral-300"
+                        >
+                            No more employees to load
+                        </Typography>
+                    </div>
+                }
+            >
             {/* Desktop View */}
             <div className="hidden md:block">
                 <table className="w-full min-w-max table-auto text-left">
@@ -256,7 +283,7 @@ const EmployeeTable = ({
                     </Card>
                 ))}
             </div>
-
+            </InfiniteScroll>
             {/* No Data State */}
             {employees.length === 0 && (
                 <div className="text-center py-6">
@@ -268,6 +295,7 @@ const EmployeeTable = ({
                     </Typography>
                 </div>
             )}
+            
         </Card>
     );
 };

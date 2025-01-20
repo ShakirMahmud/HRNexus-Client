@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
   Navbar,
@@ -6,49 +6,78 @@ import {
   Button,
   IconButton,
   Collapse,
+  Menu,
+  MenuHandler,
+  MenuList,
+  MenuItem,
 } from "@material-tailwind/react";
-import { User, LogOut } from "lucide-react";
+import { User, LogOut, UserCircle } from "lucide-react";
 import DarkModeToggle from "../components/DarkModeToggle";
 import useAuth from "../hooks/useAuth";
 import useAdmin from "../hooks/useAdmin";
 import useHR from "../hooks/useHR";
 import useEmployee from "../hooks/useEmployee";
 
+const navLinks = [
+  { name: "Home", path: "/" },
+  { name: "Contact", path: "/contact" },
+];
 const NavbarDefault = () => {
-  const { isAdmin, isAdminLoading } = useAdmin();
-  const { isHR, isHRLoading } = useHR();
-  const { isEmployee, isEmployeeLoading } = useEmployee();
+  const { isAdmin, isAdminLoading, refetchAdmin } = useAdmin();
+  const { isHR, isHRLoading, refetchHR } = useHR();
+  const { isEmployee, isEmployeeLoading, refetchEmployee } = useEmployee();
   const [openNav, setOpenNav] = useState(false);
-  const { user, logOut } = useAuth();
+  const { user, logOut, loading } = useAuth();
   const navigate = useNavigate();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [userRole, setUserRole] = useState(null);
+  useEffect(() => {
+    if (!loading && user) {
+      if (isAdmin) setUserRole("Admin");
+      else if (isHR) setUserRole("HR");
+      else if (isEmployee) setUserRole("Employee");
+    }
+  }, [isAdmin, isHR, isEmployee, loading, user]);
+  
 
   useEffect(() => {
     window.addEventListener(
       "resize",
       () => window.innerWidth >= 960 && setOpenNav(false)
     );
-    return () => window.removeEventListener("resize", () => {});
+    return () => window.removeEventListener("resize", () => { });
   }, []);
 
-  // Dynamic navigation links
-  const navLinks = [
-    { name: "Home", path: "/" },
-    { name: "Contact", path: "/contact" },
-  ];
-
-  if (!isAdminLoading && isAdmin) {
-    navLinks.push({ name: "Admin Dashboard", path: "/dashboard/admin" });
-  }
-  if (!isHRLoading && isHR) {
-    navLinks.push({ name: "HR Dashboard", path: "/dashboard/hr" });
-  }
-  if (!isEmployeeLoading && isEmployee) {
-    navLinks.push({ name: "Employee Dashboard", path: "/dashboard/employee" });
-  }
+  const dashboardLinks = useMemo(() => {
+    if (isAdminLoading || isHRLoading || isEmployeeLoading) {
+      return [
+        {
+          key: "dashboard-loading",
+          component: (
+            <Typography
+              key="dashboard-loading"
+              as="li"
+              variant="small"
+              className="p-1 font-medium text-neutral-400 dark:text-neutral-600 animate-pulse"
+            >
+              Loading...
+            </Typography>
+          ),
+        },
+      ];
+    }
+    if (isAdmin) return [{ key: "admin-dashboard", name: "Admin Dashboard", path: "/dashboard/admin" }];
+    if (isHR) return [{ key: "hr-dashboard", name: "HR Dashboard", path: "/dashboard/hr" }];
+    if (isEmployee) return [{ key: "employee-dashboard", name: "Employee Dashboard", path: "/dashboard/employee" }];
+    return [];
+  }, [isAdmin, isHR, isEmployee, isAdminLoading, isHRLoading, isEmployeeLoading]);
+  
+  
 
   // Navigation List with active state styling
   const navList = (
     <ul className="mt-2 mb-4 flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
+      {/* Base navigation links */}
       {navLinks.map((item) => (
         <Typography
           key={item.path}
@@ -70,6 +99,33 @@ const NavbarDefault = () => {
           </NavLink>
         </Typography>
       ))}
+
+      {/* Dashboard links */}
+      {dashboardLinks.map((link) => 
+        link.component ? (
+          link.component
+        ) : (
+          <Typography
+            key={link.key}
+            as="li"
+            variant="small"
+            className="p-1 font-medium 
+              text-neutral-800 dark:text-dark-text-primary 
+              hover:text-primary-500 dark:hover:text-primary-400"
+          >
+            <NavLink
+              to={link.path}
+              className={({ isActive }) =>
+                isActive
+                  ? "text-primary-500 dark:text-primary-400 border-b-2 border-primary-500 dark:border-primary-400"
+                  : ""
+              }
+            >
+              {link.name}
+            </NavLink>
+          </Typography>
+        )
+      )}
     </ul>
   );
 
@@ -101,28 +157,52 @@ const NavbarDefault = () => {
           <div className="flex items-center gap-x-2">
             <DarkModeToggle />
             {/* Conditional Rendering for Auth Buttons */}
-            {user && user?.email ?
+            { loading ? 
+            (
+              <div className="flex items-center gap-2">
+                <div 
+                  className="w-20 h-8 bg-neutral-200 dark:bg-dark-neutral-300 
+                  animate-pulse rounded-md"
+                />
+                <div 
+                  className="w-20 h-8 bg-neutral-200 dark:bg-dark-neutral-300 
+                  animate-pulse rounded-md"
+                />
+              </div>
+            ) :
+
+            user && user?.email ?
 
               <div className="hidden lg:flex items-center gap-2">
-                <IconButton
-                  variant="text"
-                  className="rounded-full 
-                  bg-primary-100 text-primary-600 
-                  dark:bg-primary-900/20 dark:text-primary-400
-                  hover:bg-primary-200 dark:hover:bg-primary-800/30"
-                >
-                  <User className="h-5 w-5" />
-                </IconButton>
-                <IconButton
-                  onClick={logOut}
-                  variant="text"
-                  className="rounded-full 
-                  bg-danger-100 text-danger-600 
-                  dark:bg-danger-900/20 dark:text-danger-400
-                  hover:bg-danger-200 dark:hover:bg-danger-800/30"
-                >
-                  <LogOut className="h-5 w-5" />
-                </IconButton>
+                <Menu open={isMenuOpen} handler={setIsMenuOpen} placement="bottom-end">
+                  <MenuHandler>
+                    <div
+                      className="rounded-full 
+                                 bg-primary-100 text-primary-600 
+                                 dark:bg-primary-900/20 dark:text-primary-400
+                                 hover:bg-primary-200 dark:hover:bg-primary-800/30 p-0 w-10 h-10"
+                    >
+                      {user?.photoURL ? (
+                        <img
+                          src={user.photoURL}
+                          alt="User Profile"
+                          className="h-10 w-10 rounded-full object-cover"
+                        />
+                      ) : (
+                        <UserCircle className="h-10 w-10" />
+                      )}
+                    </div>
+                  </MenuHandler>
+                  <MenuList className="dark:bg-dark-neutral-200 dark:border-dark-neutral-300">
+                    <MenuItem
+                      onClick={logOut}
+                      className="flex items-center gap-2 dark:text-neutral-100 dark:hover:bg-dark-neutral-300"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      Logout
+                    </MenuItem>
+                  </MenuList>
+                </Menu>
               </div>
               :
               <div className="flex items-center gap-2">
@@ -151,8 +231,6 @@ const NavbarDefault = () => {
                 </Button>
               </div>
             }
-
-
           </div>
 
           {/* Mobile Menu Toggle */}
@@ -199,34 +277,72 @@ const NavbarDefault = () => {
       </div>
 
       {/* Mobile Navigation Collapse */}
+      {/* Mobile Navigation Collapse */}
       <Collapse
         open={openNav}
         className="bg-neutral-50 dark:bg-dark-background transition-colors duration-300"
       >
         {navList}
         <div className="flex flex-col items-center gap-x-1">
-          <Button
-            fullWidth
-            onClick={() => navigate('/login')}
-            variant="outlined"
-            size="sm"
-            className="mb-2 
-              border-primary-500 text-primary-500
-              dark:border-primary-400 dark:text-primary-400"
-          >
-            Log In
-          </Button>
-          <Button
-            fullWidth
-            onClick={() => navigate('/register')}
-            variant="gradient"
-            size="sm"
-            className="bg-gradient-to-r 
-              from-primary-500 to-primary-600
-              dark:from-primary-400 dark:to-primary-500"
-          >
-            Sign Up
-          </Button>
+          {!user ? (
+            <>
+              <Button
+                fullWidth
+                onClick={() => navigate('/login')}
+                variant="outlined"
+                size="sm"
+                className="mb-2 
+            border-primary-500 text-primary-500
+            dark:border-primary-400 dark:text-primary-400"
+              >
+                Log In
+              </Button>
+              <Button
+                fullWidth
+                onClick={() => navigate('/register')}
+                variant="gradient"
+                size="sm"
+                className="bg-gradient-to-r 
+            from-primary-500 to-primary-600
+            dark:from-primary-400 dark:to-primary-500"
+              >
+                Sign Up
+              </Button>
+            </>
+          ) : (
+            <div className="w-full flex flex-col gap-2">
+              <div className="flex items-center justify-center gap-3 mb-2">
+                {user.photoURL ? (
+                  <img
+                    src={user.photoURL}
+                    alt="Profile"
+                    className="h-10 w-10 rounded-full object-cover"
+                  />
+                ) : (
+                  <UserCircle className="h-10 w-10 text-neutral-600 dark:text-neutral-300" />
+                )}
+                <Typography
+                  variant="small"
+                  className="font-medium text-neutral-800 dark:text-neutral-100"
+                >
+                  {user.displayName || user.email}
+                </Typography>
+              </div>
+              <Button
+                fullWidth
+                onClick={logOut}
+                variant="outlined"
+                color="red"
+                size="sm"
+                className="flex items-center justify-center gap-2
+            border-danger-500 text-danger-500
+            dark:border-danger-400 dark:text-danger-400"
+              >
+                <LogOut className="h-4 w-4" />
+                Logout
+              </Button>
+            </div>
+          )}
         </div>
       </Collapse>
     </Navbar >

@@ -20,7 +20,6 @@ const RoleSelectionModal = ({ isOpen, onClose, onConfirm, role, setRole }) => {
             return;
         }
         onConfirm({ role, bankAccountNo });
-        console.log('RoleSelectionModal', role)
     };
 
     return (

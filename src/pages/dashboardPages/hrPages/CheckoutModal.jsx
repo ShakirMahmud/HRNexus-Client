@@ -14,27 +14,13 @@ import {
 } from "@material-tailwind/react";
 import usePayment from "../../../hooks/usePayment";
 
-const CheckoutModal = ({ employee, isOpen, onClose }) => {
+const CheckoutModal = ({ employee, isOpen, onClose, paymentRefetch }) => {
     const stripe = useStripe();
     const elements = useElements();
     const axiosSecure = useAxiosSecure();
-
-    // const [month, setMonth] = useState('');
-    const [year, setYear] = useState('');
     const [processing, setProcessing] = useState(false);
     const [error, setError] = useState(null);
     const [clientSecret, setClientSecret] = useState('');
-
-    const { payments } = usePayment();
-
-    // Check if payment already exists for the selected month and year
-    // const isPaymentAlreadyMade = () => {
-    //     return payments.some(payment =>
-    //         payment.employeeEmail === employee.email &&
-    //         payment.month === parseInt(month) &&
-    //         payment.year === parseInt(year)
-    //     );
-    // };
 
     // Create payment intent when modal opens and total salary is available
     useEffect(() => {
@@ -54,17 +40,6 @@ const CheckoutModal = ({ employee, isOpen, onClose }) => {
 
     const handlePayment = async (event) => {
         event.preventDefault();
-        // if (!month || !year) {
-        //     setError("Please provide both month and year");
-        //     return;
-        // }
-
-        // Check for duplicate payment
-        // if (isPaymentAlreadyMade()) {
-        //     setError(`Payment for ${month}/${year} already exists`);
-        //     return;
-        // }
-
         if (!stripe || !elements) {
             setError("Payment processing unavailable");
             return;
@@ -111,6 +86,7 @@ const CheckoutModal = ({ employee, isOpen, onClose }) => {
 
                 // Submit payment request to backend
                 await axiosSecure.put(`/payments/${employee._id}`, paymentRequest);
+                paymentRefetch();
 
                 // Show success toast
                 Swal.fire({
