@@ -26,10 +26,8 @@ import {
     AlertTriangleIcon
 } from 'lucide-react';
 import UpdateProfile from "../../../components/UpdateProfile";
-import useAxiosSecure from '../../../hooks/useAxiosSecure';
 
 const HRStats = ({ hrStats, isLoading, error }) => {
-    // Handle loading state
     if (isLoading) {
         return (
             <div className="flex justify-center items-center h-full min-h-screen">
@@ -82,7 +80,7 @@ const HRStats = ({ hrStats, isLoading, error }) => {
     }));
 
     const topPerformers = (hrStats.employeePerformanceRanking?.topPerformers || [])
-        .slice(0, 5) // Limit to top 5
+        .slice(0, 5) 
         .map(performer => ({
             name: performer.name || 'Unknown Employee',
             email: performer.email || '',
@@ -109,7 +107,7 @@ const HRStats = ({ hrStats, isLoading, error }) => {
                 <UpdateProfile />
 
                 {/* Quick Stat Cards */}
-                <div className="grid grid-cols-2 gap-4 mt-6">
+                <div className=" mt-6">
                     {/* Total Work Hours */}
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
@@ -134,28 +132,6 @@ const HRStats = ({ hrStats, isLoading, error }) => {
                         </Typography>
                     </motion.div>
 
-                    {/* Total Employees */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="bg-success-50 dark:bg-dark-neutral-200 
-                            rounded-xl p-4 text-center 
-                            shadow-md hover:shadow-lg transition-shadow"
-                    >
-                        <UserIcon className="h-8 w-8 text-success-500 dark:text-dark-primary-800 mx-auto mb-2" />
-                        <Typography
-                            variant="h6"
-                            className="text-success-600 dark:text-dark-primary-800"
-                        >
-                            Employees
-                        </Typography>
-                        <Typography
-                            variant="h4"
-                            className="text-success-800 dark:text-dark-primary-800"
-                        >
-                            {topPerformers.length}
-                        </Typography>
-                    </motion.div>
                 </div>
             </div>
 
@@ -191,7 +167,7 @@ const HRStats = ({ hrStats, isLoading, error }) => {
                                 </Pie>
                                 <Tooltip />
                                 <Legend
-                                    layout="vertical"
+                                    layout="horizontal"
                                     verticalAlign="bottom"
                                     align="center"
                                 />

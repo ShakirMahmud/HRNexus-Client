@@ -8,7 +8,7 @@ const useEmployee = () => {
     const axiosSecure = useAxiosSecure();
     const { data: isEmployee, refetch: refetchEmployee, isLoading: isEmployeeLoading } = useQuery({
         queryKey: ['employee', user?.email],
-        enabled: !loading,
+        enabled: !!user?.email && !loading,
         queryFn: async () => {
             if (user?.email) {
                 const res = await axiosSecure.get(`/users/employee/${user?.email}`);

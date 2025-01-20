@@ -47,6 +47,7 @@ const useGoogleSignIn = () => {
         return;
       }
   
+
       setUser(user);
       await Promise.all([refetchAdmin(), refetchHR(), refetchEmployee()]);
       navigate(location?.state || "/");

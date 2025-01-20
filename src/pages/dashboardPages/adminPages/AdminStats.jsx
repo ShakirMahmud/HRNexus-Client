@@ -20,7 +20,8 @@ import {
     ResponsiveContainer, 
     PieChart, 
     Pie, 
-    Cell 
+    Cell, 
+    Legend
 } from 'recharts';
 import UpdateProfile from '../../../components/UpdateProfile';
 
@@ -115,6 +116,7 @@ const AdminStats = ({ adminStats, contact }) => {
                                 ))}
                             </Pie>
                             <Tooltip />
+                            <Legend />
                         </PieChart>
                     </ResponsiveContainer>
                 </CardBody>

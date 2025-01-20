@@ -60,7 +60,7 @@ const AuthProvider = ({ children }) => {
             setLoading(true);
     
             if (currentUser) {
-                setUser(currentUser);
+                // setUser(currentUser)
     
                 try {
                     const response = await axiosPublic.get(`/users/check?email=${currentUser.email}`);
@@ -79,6 +79,7 @@ const AuthProvider = ({ children }) => {
                         const userInfo = { email: currentUser.email };
                         const tokenResponse = await axiosPublic.post('/jwt', userInfo);
                         if (tokenResponse.data.token) {
+                            setUser(currentUser);
                             localStorage.setItem('token', tokenResponse.data.token);
                         }
                     }
