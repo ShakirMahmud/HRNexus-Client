@@ -66,6 +66,7 @@ const Register = () => {
         if (!validatePassword(password)) {
             return;
         }
+        
         const IMAGE_HOSTING_KEY = import.meta.env.VITE_IMAGE_HOSTING_KEY;
         const IMAGE_HOSTING_API = `https://api.imgbb.com/1/upload?key=${IMAGE_HOSTING_KEY}`;
 
